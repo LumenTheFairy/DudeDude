@@ -18,7 +18,6 @@ game.state = {
 	dude: {
 		x: 4,
 		y: 3,
-		dir: 0,
 	},
 };
 
@@ -31,7 +30,10 @@ game.set_tileset_params = function(tileset_params) {
 //sets the game params pointer to the loaded game parameters resource
 game.set_game_params = function(game_params) {
 	game.game_params = game_params;
-
+};
+//sets the game params pointer to the loaded game parameters resource
+game.hook_communication = function(communication) {
+	game.send = communication.send;
 };
 
 //set up the tileset
@@ -103,7 +105,7 @@ game.render = function() {
 	// draw the dude
 	const dest_x = (game.state.dude.x - offset_x) * game.tiles.tile_width;
 	const dest_y = (game.state.dude.y - offset_y) * game.tiles.tile_height;
-	const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width + game.state.dude.dir;
+	const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width;
 	game.tiles.draw_tile(display.context, tile, dest_x, dest_y, gc('dude'));
 
 	console.log( performance.now() - t );
@@ -146,18 +148,6 @@ const climb_dest = function(x, y, dir) {
 	}
 };
 
-const can_move = function(x, y, dir) {
-	if(['R', 'L'].includes(cn[dir])) {
-		const [horz_x, horz_y] = horz_dest(x, y, dir);
-		return !is_solid(horz_x, horz_y);
-	}
-	if(cn[dir] === 'U') {
-		const [horz_x, horz_y] = horz_dest(x, y, game.state.dude.dir);
-		const [climb_x, climb_y] = climb_dest(x, y, game.state.dude.dir);
-		return !is_solid(climb_x, climb_y) && is_solid(horz_x, horz_y);
-	}
-};
-
 const fall = function() {
 	while(!is_solid(game.state.dude.x, game.state.dude.y + 1) ) {
 		game.state.dude.y += 1;
@@ -165,18 +155,35 @@ const fall = function() {
 };
 
 const move = function(dir) {
-	if(['R', 'L'].includes(cn[dir])) {
-		game.state.dude.dir = dir;
-		if( can_move(game.state.dude.x, game.state.dude.y, dir) ) {
-			[game.state.dude.x, game.state.dude.y] = horz_dest(game.state.dude.x, game.state.dude.y, dir);
+	const x = game.state.dude.x;
+	const y = game.state.dude.y;
+
+	const [horz_x, horz_y] = horz_dest(x, y, dir);
+	if( !is_solid(horz_x, horz_y) ) {
+		[game.state.dude.x, game.state.dude.y] = [horz_x, horz_y];
+	}
+	else {
+		const [climb_x, climb_y] = climb_dest(x, y, dir);
+		if( !is_solid(climb_x, climb_y) ) {
+			[game.state.dude.x, game.state.dude.y] = [climb_x, climb_y];
 		}
 	}
-	if(cn[dir] === 'U') {
-		if( can_move(game.state.dude.x, game.state.dude.y, dir) ) {
-			[game.state.dude.x, game.state.dude.y] = climb_dest(game.state.dude.x, game.state.dude.y, game.state.dude.dir);
-		}
-	}
+
 	fall();
+};
+
+game.recieive_move = function(id, move_data) {
+	console.log('move! ' + id);
+	console.log(move_data);
+};
+
+game.add_dude = function(id, start) {
+	console.log('dude! ' + id);
+	console.log(start);
+};
+
+game.remove_dude = function(id) {
+	console.log('gone! ' + id);
 };
 
 return game;

@@ -7,12 +7,10 @@ const control = {};
 control.control_keys = {
 	0: [39, 68, 76, 102],
 	1: [37, 65, 74, 100],
-	2: [38, 87, 73, 104],
 };
 control.control_names = {
 	0: 'R',
 	1: 'L',
-	2: 'U',
 }
 
 // whatever is using the controls should add a function to this list

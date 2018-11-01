@@ -32,8 +32,12 @@ dd.manifest = [
 	{name: 'control',     dependencies: [],                     type: 'script', url: 'js/control.js' },
 	{name: 'tile_sheet',  dependencies: ['util'],               type: 'script', url: 'js/tile_sheet.js' },
 
+	{name: 'secrets',     dependencies: [],                     type: 'script', url: 'js/secrets.js' },
+
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
 	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color'], type: 'script', url: 'js/game.js' },
+
+	{name: 'communication', dependencies: ['game', 'secrets'],  type: 'script', url: 'js/communication.js' },
 
 
 	{name: 'set_game_params',
@@ -51,6 +55,11 @@ dd.manifest = [
 	 type: 'process',
 	 process: function(tileset_image, game) { game.initialize_tileset(tileset_image); }
 	},
+	{name: 'hook_communication',
+	 dependencies: ['communication', 'game'],
+	 type: 'process',
+	 process: function(communication, game) { game.hook_communication(communication); }
+	},
 
 
 	//TODO: document this chain
@@ -60,7 +69,7 @@ dd.manifest = [
 	 process: function(display) { display.initialize(); }
 	},
 	{name: 'init_control',
-	 dependencies: ['control', 'init_display'],
+	 dependencies: ['control', 'init_display', 'hook_communication'],
 	 type: 'process',
 	 process: function(control) { control.initialize(); }
 	},
