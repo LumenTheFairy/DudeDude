@@ -32,6 +32,15 @@ const get_range_base = function(n) {
 	}
 	return base;
 };
+
+// convert between 2d array index and 1d array index
+world.xy_to_loc = function(x, y) {
+	return x + y * world.width;
+};
+world.loc_to_xy = function(loc) {
+	return [loc % world.width, Math.floor(loc / world.width)];
+};
+
 // add the tile layers to the world
 world_data.layers.forEach( function(layer) {
 	if( ['visuals', 'types', 'colors'].includes(layer.name) ) {
@@ -45,15 +54,39 @@ world_data.layers.forEach( function(layer) {
 			h: Math.floor( r.height / tileheight ),
 		}));
 	}
+	if( layer.name === 'events' ) {
+		world.linkloc_to_name = {};
+		world.name_to_linkloc = {};
+		layer.objects.forEach( function(ev) {
+			if(ev.type === 'Start') {
+				world.start = {
+					x: Math.floor( ev.x / tilewidth ),
+					w: Math.floor( ev.width / tilewidth ),
+					y: Math.floor( ev.y / tileheight ),
+					h: Math.floor( ev.height / tileheight ),
+				};
+			}
+			else if(ev.type === 'Link') {
+				const loc = world.xy_to_loc(Math.floor( ev.x / tilewidth ), Math.floor( ev.y / tileheight ));
+				const name = ev.name;
+				world.linkloc_to_name[loc] = name;
+				if(name in world.name_to_linkloc) {
+					world.name_to_linkloc[name].push( loc );
+				}
+				else {
+					world.name_to_linkloc[name] = [loc];
+				}
+			}
+		} );
+	}
 });
 
-// convert between 2d array index and 1d array index
-world.xy_to_loc = function(x, y) {
-	return x + y * world.width;
-};
-world.loc_to_xy = function(loc) {
-	return [loc % world.width, Math.floor(loc / world.width)];
-};
+world.name_to_switches = {};
+world.name_to_gates = {};
+for(let name in world.name_to_linkloc) {
+	world.name_to_switches[name] = world.name_to_linkloc[name].filter( (loc) => world.type_names[ world.types[loc] ] === 'switch' );
+	world.name_to_gates[name] = world.name_to_linkloc[name].filter( (loc) => world.type_names[ world.types[loc] ] === 'gate' );
+}
 
 return world;
 };

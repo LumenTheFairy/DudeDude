@@ -119,8 +119,9 @@ tile_sheet.TileSheet.prototype.add_color = function(context, color) {
 //  tile_loc: the (1d) location of the tile in the tilesheet
 //  dest_x: the x coordinate (in pixels) of the location to draw the tile
 //  dest_y: the y coordinate (in pixels) of the location to draw the tile
+//  should_replace: true to replace the current tile, false or undefined to draw over it
 //throws a TypeError if tile_x or tile_y are not in bounds
-tile_sheet.TileSheet.prototype.draw_tile = function(context, tile_loc, dest_x, dest_y, color) {
+tile_sheet.TileSheet.prototype.draw_tile = function(context, tile_loc, dest_x, dest_y, color, should_replace) {
 
 	const tile_x = tile_loc % this.width_in_tiles;
 	const tile_y = Math.floor(tile_loc / this.width_in_tiles);
@@ -142,16 +143,19 @@ tile_sheet.TileSheet.prototype.draw_tile = function(context, tile_loc, dest_x, d
 	if(!this.color_cache.has(color)) {
 		this.add_color(context, color);
 	}
-	//draw the tile on a new mini canvas
-	const tile = document.createElement("canvas");
-	tile.width = clip_w;
-	tile.height = clip_h;
-	tile.getContext("2d").putImageData(this.color_cache.get(color), -clip_x, -clip_y, clip_x, clip_y, clip_w, clip_h);
-	//copy to the given context
-	context.drawImage(tile, dest_x, dest_y);
 
-
-	//context.putImageData(this.color_cache.get(color), dest_x-clip_x, dest_y-clip_y, clip_x, clip_y, clip_w, clip_h);
+	if(should_replace) {
+		context.putImageData(this.color_cache.get(color), dest_x-clip_x, dest_y-clip_y, clip_x, clip_y, clip_w, clip_h);
+	}
+	else {
+		//draw the tile on a new mini canvas
+		const tile = document.createElement("canvas");
+		tile.width = clip_w;
+		tile.height = clip_h;
+		tile.getContext("2d").putImageData(this.color_cache.get(color), -clip_x, -clip_y, clip_x, clip_y, clip_w, clip_h);
+		//copy to the given context
+		context.drawImage(tile, dest_x, dest_y);
+	}
 
 };
 

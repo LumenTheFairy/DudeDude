@@ -35,7 +35,7 @@ dd.manifest = [
 	{name: 'secrets',     dependencies: [],                     type: 'script', url: 'js/secrets.js' },
 
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
-	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color'], type: 'script', url: 'js/game.js' },
+	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets'], type: 'script', url: 'js/game.js' },
 
 	{name: 'communication', dependencies: ['game', 'secrets'],  type: 'script', url: 'js/communication.js' },
 
@@ -60,18 +60,22 @@ dd.manifest = [
 	 type: 'process',
 	 process: function(communication, game) { game.hook_communication(communication); }
 	},
+	{name: 'remember_flags',
+	 dependencies: ['game', 'initialize_tileset'],
+	 type: 'process',
+	 process: async function(game) { await game.remember_flags(); }
+	},
 
 
-	//TODO: document this chain
 	{name: 'init_display',
 	 dependencies: ['display', 'dom'],
 	 type: 'process',
 	 process: function(display) { display.initialize(); }
 	},
-	{name: 'init_control',
-	 dependencies: ['control', 'init_display', 'hook_communication'],
+	{name: 'start',
+	 dependencies: ['game', 'init_display', 'hook_communication', 'remember_flags'],
 	 type: 'process',
-	 process: function(control) { control.initialize(); }
+	 process: function(game) { game.start(); }
 	},
 ];
 

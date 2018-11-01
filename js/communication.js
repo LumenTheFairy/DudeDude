@@ -3,9 +3,7 @@ communication = {};
 
 // TIMING
 const now = ( () => (new Date()).getTime() );
-const HEARTBEAT_TIME = 2400;
-const HEARTBEATS = 2;
-const JOIN_TIMEOUT = 5000;
+const JOIN_TIMEOUT = 1500;
 const LOCK_TIMEOUT = 50;
 
 
@@ -45,14 +43,14 @@ communication.run_critical = async function(keyname, critical, timeout) {
 	let cur_promise = null;
 	let cur_resolver = function() {};
 
-	console.log(localStorage.getItem(ykey));
+	//console.log(localStorage.getItem(ykey));
 
 	let locked = true;
 	if( timeout > 0 ) {
-		console.log('set timeout: ' + timeout);
+		//console.log('set timeout: ' + timeout);
 		setTimeout( function() {
 			if(locked) {
-				console.log('__hijack__');
+				//console.log('__hijack__');
 				//hijack the lock
 				localStorage.setItem(ykey, my_id);
 				//free up any waits
@@ -63,34 +61,34 @@ communication.run_critical = async function(keyname, critical, timeout) {
 		}, timeout);
 	}
 
-	console.log(localStorage.getItem(ykey));
+	//console.log(localStorage.getItem(ykey));
 	while(locked) {
 		// try to get permission to set the lock
-		console.log("__x__");
+		//console.log("__x__");
 		localStorage.setItem(xkey, my_id);
-		console.log(localStorage.getItem(ykey));
+		//console.log(localStorage.getItem(ykey));
 		if( localStorage.getItem(ykey) ){
 			[cur_promise, cur_resolver] = waitForKeyChange(ykey);
-			console.log("__x_lock__");
+			//console.log("__x_lock__");
 			await cur_promise;
 			continue;
 		}
 		// try to set the lock
-		console.log("__y__");
+		//console.log("__y__");
 		localStorage.setItem(ykey, my_id);
 		if( localStorage.getItem(xkey) !== my_id ) {
 			// wait till either key changes
 			let [xchange, cur_resolver] = waitForKeyChange(xkey);
 			let [ychange, _] = waitForKeyChange(ykey);
 			cur_promise = Promise.race([xchange, ychange]);
-			console.log("__y_lock__");
+			//console.log("__y_lock__");
 			await cur_promise;
 		}
 		// see if we actually got the lock
-		console.log("__z__");
+		//console.log("__z__");
 		if( localStorage.getItem(ykey) !== my_id ){
 			[cur_promise, cur_resolver] = waitForKeyChange(ykey);
-			console.log("__z_lock__");
+			//console.log("__z_lock__");
 			await cur_promise;
 			continue;
 		}
@@ -98,12 +96,12 @@ communication.run_critical = async function(keyname, critical, timeout) {
 	}
 
 	// run critical code
-	console.log("__crit__");
+	//console.log("__crit__");
 	await critical();
 
 	// release lock
 	localStorage.setItem(ykey, "");
-	console.log("__out__");
+	//console.log("__out__");
 };
 
 
@@ -127,8 +125,8 @@ communication.send_close = ( (id) => communication.send('close', id) );
 
 // what to do on recieive
 bc.onmessage = function (ev) {
-	console.log('onmessage:');
-	console.log(ev.data);
+	//console.log('onmessage:');
+	//console.log(ev.data);
 	//todo: sanitize input
 	const message_type = ev.data.t;
 	const sender = ev.data.i;
@@ -140,7 +138,7 @@ bc.onmessage = function (ev) {
 	}
 
 	if(message_type === 'get_state') {
-		communication.send_state( game.state );
+		communication.send_state( game.dudes );
 	}
 
 	if(message_type === 'join') {
@@ -180,47 +178,33 @@ const get_connections = function() {
 		return JSON.parse(connections);
 	}
 	else {
-		return {};
+		return [];
 	}
 };
 const write_connections = function(connections) {
 	localStorage.setItem('c', JSON.stringify(connections) );
 };
 
-const join_connection = async function() {
+const join_connection = async function(dude) {
 
 	const critical = async function() {
 		const connections = get_connections();
-		connections[game.myid] = now();
+		connections.push(game.myid);
 		write_connections(connections);
-		console.log("added connection: " + game.myid);
+		//console.log("added connection: " + game.myid);
 	};
-	console.log("try connection: " + game.myid);
+	//console.log("try connection: " + game.myid);
 	await communication.run_critical('c', critical, LOCK_TIMEOUT);
-	console.log("done connection: " + game.myid);
+	//console.log("done connection: " + game.myid);
 
-	//TODO: ????
-	//game.get_Start...?
-	communication.send_join(null);
-
-	//setInterval(heartbeat, CONNECTION_TIMEOUT / 3);
+	communication.send_join(dude);
 };
 
 const close_connection = async function(id) {
 
-	id = String(id);
-
 	const critical = async function() {
 		const connections = get_connections();
-		if(id in connections) {
-			const new_connections = {};
-			for(let cid in connections) {
-				if(cid !== id) {
-					new_connections[cid] = connections[cid];
-				}
-			}
-			write_connections(new_connections);
-		}
+		write_connections( connections.filter( (cid) => cid !== id ) );
 	};
 
 	await communication.run_critical('c', critical, LOCK_TIMEOUT);
@@ -246,13 +230,13 @@ const waitForState = function(id) {
 
 		// TODO: ?????
 		const timeout_id = setTimeout( function() {
-			console.log('join timeout: ' + id);
+			//console.log('join timeout: ' + id);
 			communication.send_close(id);
 			close_connection(id).then( resolve );
 		}, JOIN_TIMEOUT);
 
 		resolver = function(state, time) {
-			console.log('join recived: ' + id);
+			//console.log('join recived: ' + id);
 			clearTimeout( timeout_id );
 
 			if(time > join_data.latest_time) {
@@ -272,37 +256,33 @@ communication.get_state();
 const connections = get_connections();
 const connection_time = now();
 
-for(let id in connections) {
-	const timestamp = connections[id];
+connections.forEach( function(id) {
+	// update maxid
+	join_data.maxid = Math.max(join_data.maxid, id);
 
-	// check if this connection is valid anymore
-	if(connection_time - timestamp < HEARTBEATS * HEARTBEAT_TIME) {
-		// update maxid
-		join_data.maxid = Math.max(join_data.maxid, id);
-
-		// construct promise
-		console.log('join start: ' + id);
-		const [ promise, resolver ] = waitForState(id);
-		join_data.connection_promises.push(promise);
-		join_data.connection_resolvers[id] = resolver;
-	}
-	else {
-		//TODO: ????
-		console.log('hearbeat timeout: ' + id);
-		communication.send_close(id);
-        await close_connection(id);
-	}
-}
+	// construct promise
+	//console.log('join start: ' + id);
+	const [ promise, resolver ] = waitForState(id);
+	join_data.connection_promises.push(promise);
+	join_data.connection_resolvers[id] = resolver;
+});
 game.myid = join_data.maxid + 1;
 
-console.log('me: ' + game.myid);
+//console.log('me: ' + game.myid);
 
-console.log('waiting all');
+//console.log('waiting all');
 await Promise.all(join_data.connection_promises);
-console.log('all done');
+//console.log('all done');
 
-//todo: set best state
-await join_connection();
+game.dudes = join_data.best_state;
+const dude = game.start_dude();
+if(dude) {
+	await join_connection(dude);
+}
+else {
+	console.error('No space for the new dude.')
+	return null;
+}
 
 return communication;
 };
