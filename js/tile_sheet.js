@@ -143,15 +143,15 @@ tile_sheet.TileSheet.prototype.draw_tile = function(context, tile_loc, dest_x, d
 		this.add_color(context, color);
 	}
 	//draw the tile on a new mini canvas
-	// const tile = document.createElement("canvas");
-	// tile.width = clip_w;
-	// tile.height = clip_h;
-	// tile.getContext("2d").putImageData(this.color_cache.get(color), -clip_x, -clip_y, clip_x, clip_y, clip_w, clip_h);
-	// //copy to the given context
-	// context.drawImage(tile, dest_x, dest_y);
+	const tile = document.createElement("canvas");
+	tile.width = clip_w;
+	tile.height = clip_h;
+	tile.getContext("2d").putImageData(this.color_cache.get(color), -clip_x, -clip_y, clip_x, clip_y, clip_w, clip_h);
+	//copy to the given context
+	context.drawImage(tile, dest_x, dest_y);
 
-	
-	context.putImageData(this.color_cache.get(color), dest_x-clip_x, dest_y-clip_y, clip_x, clip_y, clip_w, clip_h);
+
+	//context.putImageData(this.color_cache.get(color), dest_x-clip_x, dest_y-clip_y, clip_x, clip_y, clip_w, clip_h);
 
 };
 

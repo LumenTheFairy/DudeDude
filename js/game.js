@@ -22,6 +22,8 @@ game.state = {
 	},
 };
 
+game.visual_layer = document.createElement("canvas");
+
 //sets the tileset params pointer to the loaded tileset parameters resource
 game.set_tileset_params = function(tileset_params) {
 	game.tileset_params = tileset_params;
@@ -29,12 +31,26 @@ game.set_tileset_params = function(tileset_params) {
 //sets the game params pointer to the loaded game parameters resource
 game.set_game_params = function(game_params) {
 	game.game_params = game_params;
+
 };
 
 //set up the tileset
 game.initialize_tileset = function(image_data) {
 	//process the tile sheet image data
 	game.tiles = new TileSheet(image_data, game.tileset_params.transparent_colors, game.tileset_params.tile_width, game.tileset_params.tile_height);
+
+	//draw background layer
+	game.visual_layer.width = world.width * game.tiles.tile_width;
+	game.visual_layer.height = world.height * game.tiles.tile_height;
+	const context = game.visual_layer.getContext("2d");
+	for(let loc = 0; loc < world.width * world.height; loc++) {
+		const dest_x = (loc % world.width) * game.tiles.tile_width;
+		const dest_y = Math.floor(loc / world.width) * game.tiles.tile_height;
+		const tile = world.visuals[loc];
+		const color = gc( world.color_names[ world.colors[loc] ] )
+		game.tiles.draw_tile(context, tile, dest_x, dest_y, color);
+	}
+
 	game.render();
 };
 
@@ -63,29 +79,34 @@ const camera_offset = function(x, y) {
 };
 
 game.render = function() {
-	//const t = performance.now();
+	const t = performance.now();
 	display.clear();
 	// draw the game world
 	// for(let y = 0; y < world.height; y++) {
 	// 	for(let x = 0; x < world.width; x++) {
 	const [offset_x, offset_y] = camera_offset(game.state.dude.x, game.state.dude.y);
-	for(let y = 0; y < game.game_params.camera_height; y++) {
-		for(let x = 0; x < game.game_params.camera_width; x++) {
-			const dest_x = x * game.tiles.tile_width;
-			const dest_y = y * game.tiles.tile_height;
-			const loc = world.xy_to_loc(x + offset_x, y + offset_y);
-			const tile = world.visuals[loc];
-			const color = gc( world.color_names[ world.colors[loc] ] )
-			game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
-		}
-	}
+	// for(let y = 0; y < game.game_params.camera_height; y++) {
+	// 	for(let x = 0; x < game.game_params.camera_width; x++) {
+	// 		const dest_x = x * game.tiles.tile_width;
+	// 		const dest_y = y * game.tiles.tile_height;
+	// 		const loc = world.xy_to_loc(x + offset_x, y + offset_y);
+	// 		const tile = world.visuals[loc];
+	// 		const color = gc( world.color_names[ world.colors[loc] ] )
+	// 		game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
+	// 	}
+	// }
+	display.context.drawImage(game.visual_layer,
+		offset_x * game.tiles.tile_width, offset_y * game.tiles.tile_height,
+		game.game_params.camera_width * game.tiles.tile_width, game.game_params.camera_height * game.tiles.tile_height,
+		0, 0,
+		game.game_params.camera_width * game.tiles.tile_width, game.game_params.camera_height * game.tiles.tile_height);
 	// draw the dude
 	const dest_x = (game.state.dude.x - offset_x) * game.tiles.tile_width;
 	const dest_y = (game.state.dude.y - offset_y) * game.tiles.tile_height;
 	const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width + game.state.dude.dir;
 	game.tiles.draw_tile(display.context, tile, dest_x, dest_y, gc('dude'));
 
-	//console.log( performance.now() - t );
+	console.log( performance.now() - t );
 };
 
 // this is what happens when you press a direction
