@@ -1,0 +1,13 @@
+{ "columns":8,
+ "image":"..\/image\/tileset.png",
+ "imageheight":40,
+ "imagewidth":64,
+ "margin":0,
+ "name":"tileset",
+ "spacing":0,
+ "tilecount":40,
+ "tileheight":8,
+ "tilewidth":8,
+ "transparentcolor":"#000000",
+ "type":"tileset"
+}

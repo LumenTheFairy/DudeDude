@@ -1,0 +1,9 @@
+{
+	"tile_width": 8,
+	"tile_height": 8,
+
+	"transparent_colors": ["#000040", "#000000"],
+
+	"dude_tile_x": 2,
+	"dude_tile_y": 0
+}

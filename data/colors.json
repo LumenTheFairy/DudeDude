@@ -1,0 +1,11 @@
+{
+
+"default" : {
+	"background": "#000000",
+	"dude": "#A00000",
+	"white": "#FFFFFF",
+	"red": "#FF0000",
+	"green": "#00FF00"
+}
+
+}

@@ -1,0 +1,13 @@
+body {
+	background-color: #000000;
+	color: #FFFFFF;
+}
+#display-bg {
+	border-top: 1px solid #303030;
+	border-left: 1px solid #303030;
+	padding: 0px;
+    background-image: linear-gradient(to left, #303030 1px, transparent 1px), linear-gradient(to top, #303030 1px, transparent 1px);
+}
+#display {
+	image-rendering: -moz-crisp-edges;
+}

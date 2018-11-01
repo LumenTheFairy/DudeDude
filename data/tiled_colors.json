@@ -1,0 +1,13 @@
+{ "columns":3,
+ "image":"..\/image\/tiled_colors.png",
+ "imageheight":8,
+ "imagewidth":24,
+ "margin":0,
+ "name":"tiled_colors",
+ "spacing":0,
+ "tilecount":3,
+ "tileheight":8,
+ "tilewidth":8,
+ "transparentcolor":"#000000",
+ "type":"tileset"
+}
