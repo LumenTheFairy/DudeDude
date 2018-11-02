@@ -132,7 +132,7 @@ game.render = function() {
 		}
 
 		const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width;
-		const color = id === String(game.myid) ? gc('dude') : gc('white');
+		const color = id === String(game.myid) ? gc('red') : gc('gray');
 		game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
 	}
 

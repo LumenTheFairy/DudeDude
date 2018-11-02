@@ -12,8 +12,11 @@ world.type_names = {
 }
 world.color_names = {
 	0: 'white',
-	1: 'red',
+	1: 'gray',
 	2: 'green',
+	3: 'brown',
+	4: 'red',
+	5: 'tan',
 }
 // get the width and height
 world.width = world_data.width;

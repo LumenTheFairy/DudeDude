@@ -9,5 +9,15 @@ body {
     background-image: linear-gradient(to left, #303030 1px, transparent 1px), linear-gradient(to top, #303030 1px, transparent 1px);
 }
 #display {
+	image-rendering: pixelated;
 	image-rendering: -moz-crisp-edges;
+}
+#stuck {
+	font-size: 20px;
+}
+#stuck {
+	font-size: 20px;
+}
+#try-again {
+	color: #6090FF;
 }

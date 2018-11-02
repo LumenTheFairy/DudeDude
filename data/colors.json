@@ -2,10 +2,12 @@
 
 "default" : {
 	"background": "#000000",
-	"dude": "#A00000",
+	"gray": "#808090",
 	"white": "#FFFFFF",
-	"red": "#FF0000",
-	"green": "#00FF00"
+	"green": "#008020",
+	"red": "#A00000",
+	"tan": "#FFC098",
+	"brown": "#805038"
 }
 
 }
