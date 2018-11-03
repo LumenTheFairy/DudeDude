@@ -1,23 +1,118 @@
+:root {
+	--menu-height: 24px;
+}
+html {
+	height: 100%;
+}
 body {
 	background-color: #000000;
 	color: #FFFFFF;
+	font-size: 20px;
+	overflow: hidden;
+	box-sizing: border-box;
+	height: 100%;
+	padding-bottom: var(--menu-height);
+	margin: 0;
+}
+#page {
+	overflow: auto;
+	box-sizing: border-box;
+	height: 100%;
+	padding: 10px;
+}
+.hide-hidden .hidden {
+	display: none;
+}
+.show-hidden .hidden {
+	display: initial;
+}
+
+a {
+	color: #6090FF;
+}
+
+
+
+#game-region {
+	display: flex;
+	flex-wrap: wrap;
 }
 #display-bg {
 	border-top: 1px solid #303030;
 	border-left: 1px solid #303030;
 	padding: 0px;
     background-image: linear-gradient(to left, #303030 1px, transparent 1px), linear-gradient(to top, #303030 1px, transparent 1px);
+    margin-right: 30px;
 }
 #display {
 	image-rendering: pixelated;
 	image-rendering: -moz-crisp-edges;
 }
-#stuck {
-	font-size: 20px;
+#info {
+	width: 240px;
+	min-width: 240px;
+	max-width: 240px;
 }
-#stuck {
-	font-size: 20px;
+#message {
+	font-size: 32px;
 }
-#try-again {
-	color: #6090FF;
+#stats {
+	display: none;
+	flex-direction: column;
+}
+.stat-name {
+	margin-right: 10px;
+}
+
+
+
+
+
+#start-page {
+    display: inline-block;
+}
+
+.centered {
+	text-align: center;
+}
+.not-centered {
+	text-align: initial;
+}
+
+#title {
+	margin-bottom: 30px;
+}
+#main-title {
+	color: #A00000;
+	font-size: 72px;
+}
+#sub-title {
+	color: #A00000;
+	font-size: 36px;
+	margin-bottom: 16px;
+}
+#play-link {
+	font-size: 40px;
+}
+#play-p {
+	color: #808090;
+}
+
+#records {
+	display: flex;
+	flex-direction: column;
+}
+#record-heading {
+	font-size: 32px;
+	margin-bottom: 4px;
+}
+
+footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	height: var(--menu-height);
+	color: #808080;
+	font-size: 16px;
 }

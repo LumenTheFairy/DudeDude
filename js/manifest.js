@@ -33,11 +33,12 @@ dd.manifest = [
 	{name: 'tile_sheet',  dependencies: ['util'],               type: 'script', url: 'js/tile_sheet.js' },
 
 	{name: 'secrets',     dependencies: [],                     type: 'script', url: 'js/secrets.js' },
+	{name: 'locking',     dependencies: [],                     type: 'script', url: 'js/locking.js' },
 
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
-	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets'], type: 'script', url: 'js/game.js' },
+	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets', 'locking'], type: 'script', url: 'js/game.js' },
 
-	{name: 'communication', dependencies: ['game', 'secrets'],  type: 'script', url: 'js/communication.js' },
+	{name: 'communication', dependencies: ['game', 'secrets', 'locking'],  type: 'script', url: 'js/communication.js' },
 
 
 	{name: 'set_game_params',
@@ -79,11 +80,11 @@ dd.manifest = [
 	},
 ];
 
-ddl = new pl.Loader(dd, dd.manifest, { fast_fail: true } );
+let ddl = new pl.Loader(dd, dd.manifest, { fast_fail: true } );
 ddl.load().then(
 	function(val) {
-		//dd = undefined;
-		//ddl = undefined;
+		dd = undefined;
+		ddl = undefined;
 	},
 	((err) => console.error(err))
 );

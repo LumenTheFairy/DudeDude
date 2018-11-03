@@ -55,11 +55,13 @@ world_data.layers.forEach( function(layer) {
 			w: Math.floor( r.width / tilewidth ),
 			y: Math.floor( r.y / tileheight ),
 			h: Math.floor( r.height / tileheight ),
+			name: r.name,
 		}));
 	}
 	if( layer.name === 'events' ) {
 		world.linkloc_to_name = {};
 		world.name_to_linkloc = {};
+		world.exits = new Set();
 		layer.objects.forEach( function(ev) {
 			if(ev.type === 'Start') {
 				world.start = {
@@ -79,6 +81,10 @@ world_data.layers.forEach( function(layer) {
 				else {
 					world.name_to_linkloc[name] = [loc];
 				}
+			}
+			else if(ev.type === 'Exit') {
+				const loc = world.xy_to_loc(Math.floor( ev.x / tilewidth ), Math.floor( ev.y / tileheight ));
+				world.exits.add(loc);
 			}
 		} );
 	}

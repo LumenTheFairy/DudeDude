@@ -1,6 +1,6 @@
 // Written by TheOnlyOne aka LumenTheFairy aka @modest_ralts
 
-dd.scripts.game = function(display, control, world, tile_sheet, get_color, secrets) {
+dd.scripts.game = function(display, control, world, tile_sheet, get_color, secrets, locking) {
 const game = {
 	can_start: false,
 };
@@ -9,6 +9,8 @@ const game = {
 const TileSheet = tile_sheet.TileSheet;
 const gc = get_color.get;
 const cn = control.control_names;
+
+const LOCK_TIMEOUT = 50;
 
 //game data
 game.tileset_params = null
@@ -32,7 +34,10 @@ game.set_game_params = function(game_params) {
 //sets the game params pointer to the loaded game parameters resource
 game.hook_communication = function(communication) {
 	if(communication) {
+		game.communication = communication;
 		game.send_move = communication.send_move;
+		game.close_connection = communication.close_connection;
+		game.get_connections = communication.get_connections;
 		game.can_start = true;
 	}
 };
@@ -41,7 +46,12 @@ game.remember_flags = async function () {
 	const good_names = await secrets.get_flags('links');
 	game.flags = new Set(good_names);
 	good_names.forEach( (name) => game.apply_link(name) );
-}
+
+	const cheevos = await secrets.get_flags('cheevos');
+	if(cheevos.includes('You Won')) {
+		display.show_stats();
+	}
+};
 
 //set up the tileset
 game.initialize_tileset = function(image_data) {
@@ -66,9 +76,28 @@ game.start = function() {
 		control.initialize();
 		game.render();
 	}
-	else {
-		//todo: something?
+};
+
+game.end = function(message) {
+	display.fade();
+	display.set_message(message);
+	control.effects = [];
+	if(game.communication) {
+		game.communication.end();
 	}
+};
+
+game.my_win = function() {
+	secrets.save_flag('cheevos', 'You Won');
+	game.update_bests();
+	//todo: save best stats
+	game.win();
+}
+
+game.win = function() {
+	game.close_connection(game.myid);
+	display.show_stats();
+	game.end('You WIN! Refresh start page for more!');
 };
 
 const camera_offset = function(x, y) {
@@ -91,6 +120,7 @@ const camera_offset = function(x, y) {
 	if(room) {
 		offset_x = Math.max( room.x, Math.min(offset_x, room.x + room.w - game.game_params.camera_width) );
 		offset_y = Math.max( room.y, Math.min(offset_y, room.y + room.h - game.game_params.camera_height) );
+		display.set_message( room.name );
 	}
 	return [offset_x, offset_y];
 };
@@ -135,14 +165,81 @@ game.render = function() {
 		const color = id === String(game.myid) ? gc('red') : gc('gray');
 		game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
 	}
+	display_stats();
 
 	//console.log( performance.now() - t );
 };
 
+game.update_stats = async function(communication) {
+
+	const critical = async function() {
+		const num_connections = communication.get_connections().length;
+
+		let isteps = parseInt(await secrets.get_value('ls', 'isteps'));
+		if(!isteps && isteps !== 0) {
+			isteps = -1;
+		}
+		await secrets.save_value('ls', 'isteps', String(isteps + 1) );
+
+		let tsteps = parseInt(await secrets.get_value('ls', 'tsteps'));
+		if(!tsteps && tsteps !== 0) {
+			tsteps = -1;
+		}
+		await secrets.save_value('ls', 'tsteps', String(tsteps + num_connections) );
+
+		let maxd = parseInt(await secrets.get_value('ls', 'maxd'));
+		if(!maxd && maxd !== 0) {
+			maxd = 0;
+		}
+		await secrets.save_value('ls', 'maxd', String( Math.max(maxd, num_connections) ) );
+
+	};
+	await locking.run_critical(game.myid, 'ls', critical, LOCK_TIMEOUT);
+};
+
+
+game.update_bests = async function(communication) {
+
+	//ugh this got gross just to refactor 3 blocks into a map lol
+	const critical = async function() {
+		await Promise.all(['isteps', 'tsteps', 'maxd'].map( function(stat_name) {
+
+			return (async function() {
+				const lstats = parseInt(await secrets.get_value('ls', stat_name));
+				let gstats = parseInt(await secrets.get_value('gs', stat_name));
+				if(!gstats && gstats !== 0) {
+					gstats = 0;
+				}
+				await secrets.save_value('gs', stat_name, String( Math.min(lstats, gstats) ) );
+			})();
+
+		}));
+
+	};
+	await locking.run_critical(game.myid, 'gs', critical, LOCK_TIMEOUT);
+};
+
+const display_stats = async function() {
+	const isteps = parseInt(await secrets.get_value('ls', 'isteps'));
+	const tsteps = parseInt(await secrets.get_value('ls', 'tsteps'));
+	const maxd = parseInt(await secrets.get_value('ls', 'maxd'));
+
+	display.set_stats(isteps, tsteps, maxd);
+};
+
+
 // this is what happens when you press a direction
-on_button = function(dir) {
-	move(dir)
-	game.render();
+const on_button = function(dir) {
+	const state_delta = move(dir);
+	if(state_delta) {
+		game.update_stats(game.communication).then( function() {
+			game.send_move(state_delta);
+			game.render();
+			if(state_delta.w) {
+				game.my_win();
+			}
+		});
+	}
 };
 control.effects.push(on_button);
 
@@ -155,7 +252,7 @@ game.apply_link = function(name) {
 		const dest_x = (loc % world.width) * game.tiles.tile_width;
 		const dest_y = Math.floor(loc / world.width) * game.tiles.tile_height;
 		const tile = world.visuals[loc] + 1;
-		const color = gc( world.color_names[ world.colors[loc] ] )
+		const color = gc( world.color_names[ world.colors[loc] ] );
 
 		game.tiles.draw_tile(context, tile, dest_x, dest_y, color, true);
 	});
@@ -247,7 +344,7 @@ const move = function(dir) {
 		}
 	}
 	else {
-		return;
+		return null;
 	}
 
 	let new_flags = true;
@@ -285,6 +382,19 @@ const move = function(dir) {
 		}
 	}
 
+	let we_won = false;
+	const remaining_exits = new Set(world.exits);
+	for(let id in game.dudes) {
+		dude = game.dudes[id];
+		const loc = world.xy_to_loc(dude.x, dude.y);
+		remaining_exits.delete(loc);
+		if(remaining_exits.size === 0) {
+			we_won = true;
+			break;
+		}
+	}
+
+
 	// calculate state change
 	const state_delta = {
 		k: 'm', //this is a move
@@ -292,6 +402,7 @@ const move = function(dir) {
 		i: dir, //input
 		d: {}, //dudes
 		f: flags, //flags
+		w: we_won, //win
 	}
 	for(let id in game.dudes) {
 		const old_dude = old_dudes[id];
@@ -301,7 +412,7 @@ const move = function(dir) {
 		}
 	}
 
-	game.send_move(state_delta);
+	return state_delta;
 }
 
 const move_dude = function(dude, dir) {
@@ -328,8 +439,11 @@ game.recieive_move = function(id, move_data) {
 			game.dudes[id] = move_data.d[id];
 		}
 		move_data.f.forEach( (name) => game.apply_link(name) );
+		game.render();
+		if(move_data.w) {
+			game.win();
+		}
 	}
-	game.render();
 };
 
 game.start_dude = function(id) {

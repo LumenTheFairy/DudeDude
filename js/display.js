@@ -6,8 +6,8 @@ dd.scripts.display = function(game_params) {
 const display = {
 	width: game_params.camera_width * 8,
 	height: game_params.camera_height * 8,
-	horz_scale: 8,
-	vert_scale: 8,
+	horz_scale: 6,
+	vert_scale: 6,
 	container: null,
 	canvas: null,
 	context: null,
@@ -16,12 +16,22 @@ const display = {
 //these names must match the ids of the dom elements in the html
 const DISPLAY_ID = 'display';
 const DISPLAY_CONTAINER_ID = 'display-bg';
+const MESSAGE_ID = 'message';
+const STATS_ID = 'stats';
+const ISTEPS_ID = 'isteps';
+const TSTEPS_ID = 'tsteps';
+const MAXD_ID = 'maxd';
 
 //sets the canvas and its context
 //only call this after the page has loaded
 display.update_dom_pointers = function() {
 	display.container = document.getElementById(DISPLAY_CONTAINER_ID);
 	display.canvas = document.getElementById(DISPLAY_ID);
+	display.messagebox = document.getElementById(MESSAGE_ID);
+	display.stats = document.getElementById(STATS_ID);
+	display.isteps = document.getElementById(ISTEPS_ID);
+	display.tsteps = document.getElementById(TSTEPS_ID);
+	display.maxd = document.getElementById(MAXD_ID);
 	display.context = display.canvas.getContext('2d');
 };
 
@@ -30,7 +40,7 @@ display.update_dom_properties = function() {
 	//canvas absolute size
 	display.canvas.width = display.width;
 	display.canvas.height = display.height;
-	//use css to scale TODO: will not look good in many browsers
+	//use css to scale
 	display.canvas.style['width'] = (display.width * display.horz_scale) + 'px';
 	display.canvas.style['height'] = (display.height * display.vert_scale) + 'px';
 	//container should be the same size
@@ -44,6 +54,29 @@ display.update_dom_properties = function() {
 //clears the canvas
 display.clear = function() {
 	display.context.clearRect(0, 0, display.width, display.height);
+};
+
+//clears the canvas
+display.fade = function() {
+	display.context.fillStyle="#000000A0";
+	display.context.fillRect(0, 0, display.width, display.height);
+};
+
+//sets the message to the given text
+display.set_message = function(m) {
+	display.messagebox.innerText = m;
+};
+
+//makes the stats visible
+display.show_stats = function() {
+	display.stats.style.display = 'flex';
+};
+
+//changes the shown stats
+display.set_stats = function(isteps, tsteps, maxd) {
+	display.isteps.innerText = isteps;
+	display.tsteps.innerText = tsteps;
+	display.maxd.innerText = maxd;
 };
 
 //sets appropriate properties of relevant dom elements

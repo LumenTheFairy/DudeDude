@@ -1,5 +1,5 @@
 dd.scripts.secrets = async function() {
-secrets = {};
+const secrets = {};
 
 let mine = localStorage.getItem('mine');
 if(!mine) {
@@ -22,6 +22,50 @@ const sha256 = async function (message) {
     // convert bytes to hex string
     const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
     return hashHex;
+};
+//https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
+const encryptText = async (plainText, password) => {
+	const ptUtf8 = new TextEncoder().encode(plainText);
+
+	const pwUtf8 = new TextEncoder().encode(password);
+	const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8); 
+
+	const iv = crypto.getRandomValues(new Uint8Array(12));
+	const alg = { name: 'AES-GCM', iv: iv };
+	const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['encrypt']);
+
+	const enc_buf = await crypto.subtle.encrypt(alg, key, ptUtf8);
+	const enc_str = String.fromCharCode.apply(null, new Uint8Array(enc_buf));
+	const iv_str = String.fromCharCode.apply(null, iv);
+
+	return JSON.stringify( { i: iv_str, e: enc_str } );
+};
+//https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/decrypt
+const decryptText = async (enc, password) => {
+	const enc_obj = JSON.parse( enc );
+
+	//https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+	const ctBuffer = new ArrayBuffer(enc_obj.e.length);
+	const bufView = new Uint8Array(ctBuffer);
+	for (let i=0, strLen=enc_obj.e.length; i < strLen; i++) {
+		bufView[i] = enc_obj.e.charCodeAt(i);
+	}
+	const iv = new Uint8Array(enc_obj.i.length);
+	for (let i=0, strLen=enc_obj.i.length; i < strLen; i++) {
+		iv[i] = enc_obj.i.charCodeAt(i);
+	}
+
+	const pwUtf8 = new TextEncoder().encode(password);
+	const pwHash = await crypto.subtle.digest('SHA-256', pwUtf8);
+
+	const alg = { name: 'AES-GCM', iv: iv };
+	const key = await crypto.subtle.importKey('raw', pwHash, alg, false, ['decrypt']);
+
+	const ptBuffer = await crypto.subtle.decrypt(alg, key, ctBuffer);
+
+	const plaintext = new TextDecoder().decode(ptBuffer);
+
+	return plaintext;
 };
 secrets.channel_name = "dudedude_" + await sha256(navigator.userAgent);
 
@@ -60,6 +104,23 @@ secrets.get_flags = async function(key) {
 	}
 
 	return good_names;
+};
+
+
+secrets.save_value = async function(key, name, value) {
+	pw = await flag_secret(key, name);
+	const key_map = get_key_map(key);
+	key_map[name] = await encryptText(value, pw);
+	write_key_map(key, key_map);
+};
+
+secrets.get_value = async function(key, name) {
+	const key_map = get_key_map(key);
+	pw = await flag_secret(key, name);
+	if(name in key_map) {
+		return await decryptText(key_map[name], pw);
+	}
+	return undefined;
 };
 
 return secrets;

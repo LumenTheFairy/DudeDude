@@ -11,8 +11,27 @@
 </head>
 
 <body>
-	<div id='display-bg'><canvas id='display'></canvas></div>
-	<p id='stuck'>Stuck? Try <a id='try-again' href="game.html" target="_blank">starting over.</a></p>
+	<div id='page' class='centered'>
+
+		<div id='start-page' class='not-centered'>
+			<div id='game-region'>
+				<div id='display-bg'><canvas id='display'></canvas></div>
+				<div id='info'>
+					<p id='message'>Loading...</p>
+					<div id='stats'>
+						<span><span class='stat-name'>Individual Steps:</span><span id='isteps'>0</span></span>
+						<span><span class='stat-name'>Total Steps:</span><span id='tsteps'>0</span></span>
+						<span><span class='stat-name'>Max Dudes:</span><span id='maxd'>0</span></span>
+					</div>
+				</div>
+			</div>
+			<p id='stuck'>Stuck? Try <a id='try-again' href="game.html" target="_blank">starting over</a>.</p>
+		</div>
+
+	</div>
+	<footer>
+		© <a href="https://twitter.com/Modest_ralts" target="_blank">TheOnlyOne</a> 2018
+	</footer>
 </body>
 
 </html>
