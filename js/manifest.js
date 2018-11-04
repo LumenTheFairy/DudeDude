@@ -32,8 +32,8 @@ dd.manifest = [
 	{name: 'control',     dependencies: [],                     type: 'script', url: 'js/control.js' },
 	{name: 'tile_sheet',  dependencies: ['util'],               type: 'script', url: 'js/tile_sheet.js' },
 
-	{name: 'secrets',     dependencies: [],                     type: 'script', url: 'js/secrets.js' },
 	{name: 'locking',     dependencies: [],                     type: 'script', url: 'js/locking.js' },
+	{name: 'secrets',     dependencies: ['locking'],            type: 'script', url: 'js/secrets.js' },
 
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
 	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets', 'locking'], type: 'script', url: 'js/game.js' },

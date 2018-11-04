@@ -61,6 +61,7 @@ world_data.layers.forEach( function(layer) {
 	if( layer.name === 'events' ) {
 		world.linkloc_to_name = {};
 		world.name_to_linkloc = {};
+		world.link_names = new Set();
 		world.exits = new Set();
 		layer.objects.forEach( function(ev) {
 			if(ev.type === 'Start') {
@@ -74,6 +75,7 @@ world_data.layers.forEach( function(layer) {
 			else if(ev.type === 'Link') {
 				const loc = world.xy_to_loc(Math.floor( ev.x / tilewidth ), Math.floor( ev.y / tileheight ));
 				const name = ev.name;
+				world.link_names.add(name);
 				world.linkloc_to_name[loc] = name;
 				if(name in world.name_to_linkloc) {
 					world.name_to_linkloc[name].push( loc );

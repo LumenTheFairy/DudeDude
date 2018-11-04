@@ -1,5 +1,7 @@
-dd.scripts.secrets = async function() {
+dd.scripts.secrets = async function(locking) {
 const secrets = {};
+
+const LOCK_TIMEOUT = 50;
 
 let mine = localStorage.getItem('mine');
 if(!mine) {
@@ -84,12 +86,15 @@ const write_key_map = function(key, data) {
 	localStorage.setItem(key, JSON.stringify(data) );
 };
 
-secrets.save_flag = function(key, name) {
-	flag_secret(key, name).then( function (pw) {
+secrets.save_flag = async function(id, key, name) {
+	const critical = async function() {
+		const pw = await flag_secret(key, name);
 		const key_map = get_key_map(key);
 		key_map[name] = pw;
 		write_key_map(key, key_map);
-	});
+	};
+
+	await locking.run_critical(id, key, critical, LOCK_TIMEOUT);
 };
 
 secrets.get_flags = async function(key) {
@@ -106,7 +111,8 @@ secrets.get_flags = async function(key) {
 	return good_names;
 };
 
-
+//this should technically be locked, but it will probably hurt the performance,
+//and this is run quite a bit for the moving tab
 secrets.save_value = async function(key, name, value) {
 	pw = await flag_secret(key, name);
 	const key_map = get_key_map(key);

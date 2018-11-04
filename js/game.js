@@ -87,12 +87,53 @@ game.end = function(message) {
 	}
 };
 
-game.my_win = function() {
-	secrets.save_flag('cheevos', 'You Won');
-	game.update_bests();
-	//todo: save best stats
+game.set_win_cheevos = async function() {
+	await secrets.save_flag(game.myid, 'cheevos', 'You Won');
+
+	const isteps = parseInt(await secrets.get_value('gs', 'isteps'));
+	if(isteps <= 1250) {
+		await secrets.save_flag(game.myid, 'cheevos', 'istepsA');
+	}
+	if(isteps <= 800) {
+		await secrets.save_flag(game.myid, 'cheevos', 'istepsB');
+	}
+	if(isteps <= 500) {
+		await secrets.save_flag(game.myid, 'cheevos', 'istepsC');
+	}
+
+	const tsteps = parseInt(await secrets.get_value('gs', 'tsteps'));
+	if(tsteps <= 2500) {
+		await secrets.save_flag(game.myid, 'cheevos', 'tstepsA');
+	}
+	if(tsteps <= 1900) {
+		await secrets.save_flag(game.myid, 'cheevos', 'tstepsB');
+	}
+	if(tsteps <= 1450) {
+		await secrets.save_flag(game.myid, 'cheevos', 'tstepsC');
+	}
+
+	const maxd = parseInt(await secrets.get_value('gs', 'maxd'));
+	if(maxd <= 4) {
+		await secrets.save_flag(game.myid, 'cheevos', 'maxdA');
+	}
+	if(maxd <= 3) {
+		await secrets.save_flag(game.myid, 'cheevos', 'maxdB');
+	}
+
+	const good_names = await secrets.get_flags('links');
+	if(world.link_names.size - good_names.length >= 1) {
+		await secrets.save_flag(game.myid, 'cheevos', 'gateA');
+	}
+	if(world.link_names.size - good_names.length >= 2) {
+		await secrets.save_flag(game.myid, 'cheevos', 'gateB');
+	}
+};
+
+game.my_win = async function() {
+	await game.update_bests();
+	await game.set_win_cheevos();
 	game.win();
-}
+};
 
 game.win = function() {
 	game.close_connection(game.myid);
@@ -201,22 +242,21 @@ game.update_stats = async function(communication) {
 game.update_bests = async function(communication) {
 
 	//ugh this got gross just to refactor 3 blocks into a map lol
-	const critical = async function() {
-		await Promise.all(['isteps', 'tsteps', 'maxd'].map( function(stat_name) {
+	const critical_min = function(stat_name) {
 
-			return (async function() {
-				const lstats = parseInt(await secrets.get_value('ls', stat_name));
-				let gstats = parseInt(await secrets.get_value('gs', stat_name));
-				if(!gstats && gstats !== 0) {
-					gstats = 0;
-				}
-				await secrets.save_value('gs', stat_name, String( Math.min(lstats, gstats) ) );
-			})();
-
-		}));
-
+		return async function() {
+			const lstats = parseInt(await secrets.get_value('ls', stat_name));
+			let gstats = parseInt(await secrets.get_value('gs', stat_name));
+			if(!gstats) {
+				gstats = Number.MAX_SAFE_INTEGER;
+			}
+			await secrets.save_value('gs', stat_name, String( Math.min(lstats, gstats) ) );
+		}
 	};
-	await locking.run_critical(game.myid, 'gs', critical, LOCK_TIMEOUT);
+
+	await locking.run_critical(game.myid, 'gs', critical_min('isteps'), LOCK_TIMEOUT);
+	await locking.run_critical(game.myid, 'gs', critical_min('tsteps'), LOCK_TIMEOUT);
+	await locking.run_critical(game.myid, 'gs', critical_min('maxd'), LOCK_TIMEOUT);
 };
 
 const display_stats = async function() {
@@ -230,16 +270,17 @@ const display_stats = async function() {
 
 // this is what happens when you press a direction
 const on_button = function(dir) {
-	const state_delta = move(dir);
-	if(state_delta) {
-		game.update_stats(game.communication).then( function() {
-			game.send_move(state_delta);
-			game.render();
-			if(state_delta.w) {
-				game.my_win();
-			}
-		});
-	}
+	move(dir).then( function(state_delta) {
+		if(state_delta) {
+			game.update_stats(game.communication).then( function() {
+				game.send_move(state_delta);
+				game.render();
+				if(state_delta.w) {
+					game.my_win();
+				}
+			});
+		}
+	});
 };
 control.effects.push(on_button);
 
@@ -307,7 +348,7 @@ const apply_gravity = function() {
 	});
 };
 
-const move = function(dir) {
+const move = async function(dir) {
 	const old_dudes = {};
 	for(let id in game.dudes) {
 		old_dudes[id] = {
@@ -376,7 +417,7 @@ const move = function(dir) {
 			   && !game.flags.has(name) ) {
 				flags.push(name);
 				game.apply_link(name);
-				secrets.save_flag('links', name);
+				await secrets.save_flag(game.myid, 'links', name);
 				new_flags = true;
 			}
 		}

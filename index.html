@@ -5,6 +5,7 @@
 	<meta charset='utf-8'/>
 	<link rel="stylesheet" href="css/style.css">
 	<script src='js/promise_loader.js'></script>
+	<script src='js/home_manifest.js'></script>
 	<link rel="icon" href="image/home.png">
 	<title>Dude Dude START</title>
 </head>
@@ -23,20 +24,29 @@
 				<p> Hint: The solutions can usually be reached by (literally) thinking outside the box... </p>
 				<p> Only Firefox and Chrome are currently supported. Javascript must be enabled.</p>
 
-				<hr>
-
-				<p> Want to reset your progress? <a id='reset-progress'>Reset Progress</a> </p>
-
-				<hr>
-
 				<div class='hidden'>
+				<hr>
 					<div id='records'>
 						<span id='record-heading'>Records:</span>
-						<span><span class='stat-name'>Individual Steps:</span><span id='isteps'>0</span></span>
-						<span><span class='stat-name'>Total Steps:</span><span id='tsteps'>0</span></span>
-						<span><span class='stat-name'>Max Dudes:</span><span id='maxd'>0</span></span>
+						<span><span class='stat-name'>Individual Steps:</span><span id='isteps'></span></span>
+						<span><span class='stat-name'>Total Steps:</span><span id='tsteps'></span></span>
+						<span><span class='stat-name'>Max Dudes:</span><span id='maxd'></span></span>
+					</div>
+					<div id='cheevos'>
+						<span id='cheevo-heading'>Achievements:</span>
+						<div id='cheevo-list'>
+							
+						</div>
 					</div>
 				</div>
+				<hr>
+
+				<span id='reset-box'>
+					<span> Want to reset your progress? <a id='reset-progress' href=''>Reset Progress</a> </span>
+					<span id='reset-note' class='hidden'>(This will not clear Records or Achievements.)</span>
+				</span>
+
+
 			</div>
 
 		</div>

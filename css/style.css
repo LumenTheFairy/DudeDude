@@ -97,14 +97,45 @@ a {
 #play-p {
 	color: #808090;
 }
+#reset-box {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 32px;
+}
+#reset-note {
+	color: #808090;
+}
 
 #records {
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 32px;
 }
 #record-heading {
 	font-size: 32px;
+	margin-bottom: 8px;
+}
+#cheevo-heading {
+	font-size: 32px;
+	margin-bottom: 8px;
+}
+.cheevo-item {
+	display: flex;
 	margin-bottom: 4px;
+}
+.cheevo-text {
+	display: flex;
+	flex-direction: column;
+}
+.cheevo-check-box {
+	margin-right: 8px;
+}
+.cheevo-name {
+	font-size: 24px;
+}
+.cheevo-desc {
+	font-size: 18px;
+	color: #9090A0;
 }
 
 footer {
