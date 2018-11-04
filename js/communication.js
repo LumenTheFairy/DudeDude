@@ -5,8 +5,8 @@ const communication = {};
 
 // TIMING
 const now = ( () => (new Date()).getTime() );
-const JOIN_TIMEOUT = 1500;
-const LOCK_TIMEOUT = 1500;
+const JOIN_TIMEOUT = 1200;
+const LOCK_TIMEOUT = 50;
 
 
 // COMMUNICATION
