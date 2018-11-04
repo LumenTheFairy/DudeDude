@@ -9,7 +9,8 @@ world.type_names = {
 	1: 'solid',
 	2: 'switch',
 	3: 'gate',
-}
+};
+//todo: this should be in colors.json
 world.color_names = {
 	0: 'white',
 	1: 'gray',
@@ -17,7 +18,7 @@ world.color_names = {
 	3: 'brown',
 	4: 'red',
 	5: 'tan',
-}
+};
 // get the width and height
 world.width = world_data.width;
 world.height = world_data.height;

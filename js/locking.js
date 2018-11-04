@@ -1,3 +1,5 @@
+// Written by TheOnlyOne aka LumenTheFairy aka @modest_ralts
+
 dd.scripts.locking = async function() {
 const locking = {};
 

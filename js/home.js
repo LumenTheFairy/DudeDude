@@ -1,3 +1,5 @@
+// Written by TheOnlyOne aka LumenTheFairy aka @modest_ralts
+
 dd.scripts.home = async function(secrets) {
 
 const reset_progress = function() {

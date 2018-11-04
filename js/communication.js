@@ -1,3 +1,5 @@
+// Written by TheOnlyOne aka LumenTheFairy aka @modest_ralts
+
 dd.scripts.communication = async function(game, secrets, locking) {
 const communication = {};
 
@@ -68,6 +70,11 @@ bc.onmessage = function (ev) {
 	}
 };
 window.onbeforeunload = function(e) {
+	//small hack to clean up the connections when the last connection is closed
+	//it isn't locked because nothing async can reliably finish in the unload callback
+	if(communication.get_connections().length === 1) {
+		write_connections([]);
+	}
 	communication.send_close(game.myid);
 	game.end('');
 	return null;
@@ -140,7 +147,6 @@ const waitForState = function(id) {
 
 	const promise = new Promise( function(resolve, reject) {
 
-		// TODO: ?????
 		const timeout_id = setTimeout( function() {
 			//console.log('join timeout: ' + id);
 			communication.send_close(id);

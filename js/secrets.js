@@ -1,3 +1,5 @@
+// Written by TheOnlyOne aka LumenTheFairy aka @modest_ralts
+
 dd.scripts.secrets = async function(locking) {
 const secrets = {};
 
@@ -7,6 +9,10 @@ let mine = localStorage.getItem('mine');
 if(!mine) {
 	mine = String(Math.floor(Math.random() * 10000000000000000));
 	localStorage.setItem('mine', mine);
+}
+let hi = localStorage.getItem('___hi');
+if(!hi) {
+	localStorage.setItem('___hi', "Hi! Welcome to the localStorage for Dude Dude -A Short Puzzle Adventure-! If you're here because you think it's part of the puzzle, you can rest assured that it is not, and you can go back to the game proper. If you're here to change your scores or something, I'm not going to try to stop you; however, the data is slightly obfuscated, so it won't be entirely simple (but honestly not that hard either). Do be aware that tampering with the data here very well may cause issues in the game, and we aren't going to pretend that that isn't your own problem. So good luck with that.");
 }
 
 //https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
