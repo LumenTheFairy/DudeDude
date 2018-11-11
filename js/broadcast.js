@@ -78,4 +78,10 @@ if(typeof BroadcastChannel === 'undefined') {
 
     global.BroadcastChannel = global.BroadcastChannel || BroadcastChannel;
   }(self));
+  //cleanup broadcast message that failed to be removed
+  for(let key in localStorage){
+    if(key[0] == '$') {
+      localStorage.removeItem(key);
+    }
+  }
 }
