@@ -13,6 +13,7 @@ body {
 	height: 100%;
 	padding-bottom: var(--menu-height);
 	margin: 0;
+	-webkit-text-size-adjust: 100%;
 }
 #page {
 	overflow: auto;
@@ -62,6 +63,31 @@ a {
 }
 .stat-name {
 	margin-right: 10px;
+}
+#controls {
+	margin-top: 20px;
+	display: none;
+	justify-content: space-between;
+}
+.mobile #controls {
+	display: flex;
+}
+.control-button {
+	width: 48%;
+	font-size: 40vw;
+	text-align: center;
+    padding: 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+	touch-action: none;
+	border-radius: 0;
+	-webkit-appearance: none;
+	background-color: #888888;
+	touch-action: manipulation;
+}
+.mobile #stuck {
+	font-size: 9vw;
 }
 
 
@@ -146,4 +172,57 @@ footer {
 	height: var(--menu-height);
 	color: #808080;
 	font-size: 16px;
+}
+
+/* This cutoff needs major experimenting and adjustment, but hey, it works for /my/ phone. */
+@media only screen and (max-width: 992px) {
+	:root {
+		--menu-height: 4vw;
+	}
+	footer {
+		font-size: 3vw;
+	}
+    body {
+        font-size: 5vw;
+    }
+	#title {
+		margin-bottom: 6vw;
+	}
+	#main-title {
+		font-size: 18vw;
+	}
+	#sub-title {
+		font-size: 8vw;
+		margin-bottom: 4vw;
+	}
+	#play-link {
+		font-size: 10vw;
+	}
+	#reset-box {
+		margin-bottom: 8vw;
+	}
+
+	#records {
+		margin-bottom: 8vw;
+	}
+	#record-heading {
+		font-size: 8vw;
+		margin-bottom: 2vw;
+	}
+	#cheevo-heading {
+		font-size: 8vw;
+		margin-bottom: 2vw;
+	}
+	.cheevo-item {
+		margin-bottom: 1vw;
+	}
+	.cheevo-check-box {
+		margin-right: 2vw;
+	}
+	.cheevo-name {
+		font-size: 6vw;
+	}
+	.cheevo-desc {
+		font-size: 4.5vw;
+	}
 }
