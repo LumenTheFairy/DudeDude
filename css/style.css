@@ -202,6 +202,21 @@ footer {
 		margin-bottom: 8vw;
 	}
 
+	#message {
+		font-size: 4vw;
+	}
+	#stats {
+		font-size: 3vw;
+	}
+	.stat-block {
+		display: flex;
+		flex-direction: column;
+	}
+	.stat-name {
+		margin-right: 0;
+
+	}
+
 	#records {
 		margin-bottom: 8vw;
 	}
