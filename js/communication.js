@@ -193,7 +193,7 @@ await Promise.all(join_data.connection_promises);
 //console.log('all done');
 
 game.dudes = join_data.best_state;
-const dude = game.start_dude();
+const dude = await game.start_dude();
 if(dude) {
 	await join_connection(dude);
 }

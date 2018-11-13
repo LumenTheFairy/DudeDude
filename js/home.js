@@ -27,12 +27,14 @@ document.getElementById('reset-progress').onclick = reset_progress;
 //fill in stats
 const isteps = parseInt(await secrets.get_value('gs', 'isteps'));
 const tsteps = parseInt(await secrets.get_value('gs', 'tsteps'));
+const cdude = parseInt(await secrets.get_value('gs', 'cdude'));
 const maxd = parseInt(await secrets.get_value('gs', 'maxd'));
 
 //console.log(isteps, tsteps, maxd);
 
 document.getElementById('isteps').innerText = isteps || '?';
 document.getElementById('tsteps').innerText = tsteps || '?';
+document.getElementById('cdude').innerText = cdude || '?';
 document.getElementById('maxd').innerText = maxd || '?';
 
 //get cheevos
@@ -49,10 +51,12 @@ const cheevo_data = [
 	{ key: 'tstepsB', name: 'Silver Total', desc: 'Beat the game with at most 1900 "Total Steps"' },
 	{ key: 'tstepsC', name: 'Gold Total', desc: 'Beat the game with at most 1450 "Total Steps"' },
 	{ key: 'tstepsD', name: 'Platinum Total', desc: 'Beat the game with at most 1200 "Total Steps"' },
-	{ key: 'maxdA', name: 'Good Dudes', desc: 'Beat the game with at most 4 Dudes at a time' },
-	{ key: 'maxdB', name: 'Great Dudes', desc: 'Beat the game with at most 3 Dudes at a time' },
+	{ key: 'cdudeA', name: 'HexaDude', desc: 'Beat the game creating at most 6 Dudes' },
+	{ key: 'cdudeB', name: 'PentaDude', desc: 'Beat the game creating only 5 Dudes' },
+	{ key: 'maxdA', name: 'Medium Max', desc: 'Beat the game with at most 4 Dudes at a time' },
+	{ key: 'maxdB', name: 'Minimum Max', desc: 'Beat the game with at most 3 Dudes at a time' },
 	{ key: 'gateA', name: 'Missing Link', desc: 'Beat the game with at least one unopened gate' },
-	{ key: 'gateB', name: 'Low Percent', desc: 'Beat the game with two unopened gates' },
+	{ key: 'gateB', name: 'Low Percent', desc: 'Beat the game with three unopened gates' },
 ];
 
 const cheevo_list = cheevo_data.map( (data) => 

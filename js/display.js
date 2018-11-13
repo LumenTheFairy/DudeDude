@@ -20,6 +20,7 @@ const MESSAGE_ID = 'message';
 const STATS_ID = 'stats';
 const ISTEPS_ID = 'isteps';
 const TSTEPS_ID = 'tsteps';
+const CDUDE_ID = 'cdude';
 const MAXD_ID = 'maxd';
 
 //sets the canvas and its context
@@ -31,6 +32,7 @@ display.update_dom_pointers = function() {
 	display.stats = document.getElementById(STATS_ID);
 	display.isteps = document.getElementById(ISTEPS_ID);
 	display.tsteps = document.getElementById(TSTEPS_ID);
+	display.cdude = document.getElementById(CDUDE_ID);
 	display.maxd = document.getElementById(MAXD_ID);
 	display.context = display.canvas.getContext('2d');
 };
@@ -73,9 +75,10 @@ display.show_stats = function() {
 };
 
 //changes the shown stats
-display.set_stats = function(isteps, tsteps, maxd) {
+display.set_stats = function(isteps, tsteps, cdude, maxd) {
 	display.isteps.innerText = isteps;
 	display.tsteps.innerText = tsteps;
+	display.cdude.innerText = cdude;
 	display.maxd.innerText = maxd;
 };
 
