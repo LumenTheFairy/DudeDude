@@ -48,7 +48,7 @@ game.remember_flags = async function () {
 	good_names.forEach( (name) => game.apply_link(name) );
 
 	const cheevos = await secrets.get_flags('cheevos');
-	if(cheevos.includes('You Won') || true) {
+	if(cheevos.includes('You Won')) {
 		display.show_stats();
 	}
 };
