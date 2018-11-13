@@ -82,6 +82,17 @@ display.set_stats = function(isteps, tsteps, cdude, maxd) {
 	display.maxd.innerText = maxd;
 };
 
+display.update_for_mobile = function() {
+	//calculate a max width for the game
+	const available_width = window.innerWidth - 270;
+	const scale = Math.floor( available_width / (8*9) );
+	display.horz_scale = scale;
+	display.vert_scale = scale;
+	display.update_dom_properties();
+	document.body.className = 'mobile';
+	document.getElementById('try-again').href += '?mobile=1';
+};
+
 //sets appropriate properties of relevant dom elements
 //
 //notice that since these calls interact with dom elements, these dom elements must already exit,
@@ -89,6 +100,9 @@ display.set_stats = function(isteps, tsteps, cdude, maxd) {
 display.initialize = function() {
 	display.update_dom_pointers();
 	display.update_dom_properties();
+	if(window.location.search) {
+		display.update_for_mobile();
+	}
 };
 
 

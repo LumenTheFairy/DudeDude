@@ -16,10 +16,14 @@ control.control_names = {
 // whatever is using the controls should add a function to this list
 control.effects = [];
 
+const run_effects = function(dir) {
+	control.effects.forEach( f => f(dir) );
+};
+
 const keydown_event = function(ev) {
 	for(let dir in control.control_keys) {
 		if(control.control_keys[dir].includes(ev.keyCode)) {
-			control.effects.forEach( f => f(parseInt(dir)) );
+			run_effects( parseInt(dir) );
 		}
 	}
 };
@@ -27,6 +31,8 @@ const keydown_event = function(ev) {
 //attach all of the control handlers
 control.initialize = function() {
 	window.addEventListener('keydown', keydown_event);
+	document.getElementById('left-button').onclick = (_) => run_effects(1);
+	document.getElementById('right-button').onclick = (_) => run_effects(0);
 };
 
 return control;

@@ -5,10 +5,12 @@ dd.scripts = {};
 
 dd.manifest = [
 
+	{name: 'broadcast', type: 'external_script', url: 'js/broadcast.js' },
+
 	{name: 'locking', dependencies: [], type: 'script', url: 'js/locking.js' },
 	{name: 'secrets', dependencies: ['locking'], type: 'script', url: 'js/secrets.js' },
 
-	{name: 'home', dependencies: ['secrets', 'dom'], type: 'script', url: 'js/home.js' },
+	{name: 'home', dependencies: ['secrets', 'broadcast', 'dom'], type: 'script', url: 'js/home.js' },
 
 ];
 
