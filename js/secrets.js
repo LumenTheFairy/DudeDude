@@ -93,8 +93,6 @@ secrets.get_value = async function(key, name) {
 	if(name in key_map) {
 		const value = key_map[name].v;
 		const check = key_map[name].s;
-		console.log(check);
-		console.log(await value_check(key, name, value));
 		if(check === await value_check(key, name, value)) {
 			return value;
 		}
