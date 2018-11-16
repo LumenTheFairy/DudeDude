@@ -75,6 +75,22 @@ window.onbeforeunload = function(e) {
 	if(communication.get_connections().length === 1) {
 		write_connections([]);
 	}
+	//if this character was the last one moving, and is at the end of the connection list,
+	//refreshing would not register as a control swap.
+	//so, in that case, change the previous mover to a non-existant connection
+	//we need to read these values directly because the normal functions won't be certain to finish
+	let ls = localStorage.getItem('ls');
+	if(ls) {
+		ls = JSON.parse(ls);
+		let lastc = ls.lastc;
+		if(lastc) {
+			if(parseInt(lastc.v) === game.myid) {
+				ls.lastc = undefined;
+				localStorage.setItem('ls', JSON.stringify(ls));
+			}
+		}
+	}
+
 	communication.send_close(game.myid);
 	game.end('');
 	return null;
@@ -115,7 +131,6 @@ const join_connection = async function(dude) {
 	//console.log("try connection: " + game.myid);
 	await locking.run_critical(game.myid, 'c', critical, LOCK_TIMEOUT);
 	//console.log("done connection: " + game.myid);
-	await game.update_stats(communication);
 	communication.send_join(dude);
 };
 
@@ -193,7 +208,7 @@ await Promise.all(join_data.connection_promises);
 //console.log('all done');
 
 game.dudes = join_data.best_state;
-const dude = await game.start_dude();
+const dude = await game.start_dude(communication);
 if(dude) {
 	await join_connection(dude);
 }

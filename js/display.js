@@ -22,6 +22,7 @@ const ISTEPS_ID = 'isteps';
 const TSTEPS_ID = 'tsteps';
 const CDUDE_ID = 'cdude';
 const MAXD_ID = 'maxd';
+const CSWAP_ID = 'cswap';
 
 //sets the canvas and its context
 //only call this after the page has loaded
@@ -34,6 +35,7 @@ display.update_dom_pointers = function() {
 	display.tsteps = document.getElementById(TSTEPS_ID);
 	display.cdude = document.getElementById(CDUDE_ID);
 	display.maxd = document.getElementById(MAXD_ID);
+	display.cswap = document.getElementById(CSWAP_ID);
 	display.context = display.canvas.getContext('2d');
 };
 
@@ -51,6 +53,10 @@ display.update_dom_properties = function() {
 	//change the grid size for the background
 	//https://stackoverflow.com/questions/3540194/how-to-make-a-grid-like-graph-paper-grid-with-just-css
 	display.container.style['background-size'] = display.horz_scale + 'px ' + display.vert_scale + 'px';
+};
+
+display.set_background_color = function(color) {
+	display.container.style['background-color'] = color;
 };
 
 //clears the canvas
@@ -75,11 +81,12 @@ display.show_stats = function() {
 };
 
 //changes the shown stats
-display.set_stats = function(isteps, tsteps, cdude, maxd) {
+display.set_stats = function(isteps, tsteps, cdude, maxd, cswap) {
 	display.isteps.innerText = isteps;
 	display.tsteps.innerText = tsteps;
 	display.cdude.innerText = cdude;
 	display.maxd.innerText = maxd;
+	display.cswap.innerText = cswap;
 };
 
 //sets appropriate properties of relevant dom elements

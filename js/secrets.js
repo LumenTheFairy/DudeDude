@@ -10,10 +10,12 @@ if(!crypto.subtle) {
 
 const LOCK_TIMEOUT = 50;
 
+let firstRun = false;
 let mine = localStorage.getItem('mine');
 if(!mine) {
 	mine = String(Math.floor(Math.random() * 10000000000000000));
 	localStorage.setItem('mine', mine);
+	firstRun = true;
 }
 let hi = localStorage.getItem('___hi');
 if(!hi) {
@@ -97,8 +99,22 @@ secrets.get_value = async function(key, name) {
 			return value;
 		}
 	}
-	return undefined;
+	return null;
 };
+
+secrets.reset_ls = async function() {
+	await secrets.save_value('ls', 'isteps', 0 );
+	await secrets.save_value('ls', 'tsteps', 0 );
+	await secrets.save_value('ls', 'maxd', 0 );
+	await secrets.save_value('ls', 'cdude', 0 );
+	await secrets.save_value('ls', 'cswap', 0 );
+	await secrets.save_value('ls', 'lastc', 1 );
+}
+
+//init the istats
+if(firstRun) {
+	await secrets.reset_ls();
+}
 
 return secrets;
 };

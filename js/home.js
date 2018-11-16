@@ -2,7 +2,8 @@
 
 dd.scripts.home = async function(secrets) {
 
-const reset_progress = function() {
+const reset_progress = function(e) {
+	e.preventDefault();
 	//close all connections
 	const bc = new BroadcastChannel(secrets.channel_name);
 	let connections = localStorage.getItem('c');
@@ -19,7 +20,9 @@ const reset_progress = function() {
 	//whipe stored links
 	localStorage.setItem('links', JSON.stringify({}));
 	//whipe stored stats
-	localStorage.setItem('ls', JSON.stringify({}));
+	secrets.reset_ls().then( () => location.replace('') );
+
+	return false;
 };
 
 document.getElementById('reset-progress').onclick = reset_progress;
@@ -29,6 +32,7 @@ const isteps = parseInt(await secrets.get_value('gs', 'isteps'));
 const tsteps = parseInt(await secrets.get_value('gs', 'tsteps'));
 const cdude = parseInt(await secrets.get_value('gs', 'cdude'));
 const maxd = parseInt(await secrets.get_value('gs', 'maxd'));
+const cswap = parseInt(await secrets.get_value('gs', 'cswap'));
 
 //console.log(isteps, tsteps, maxd);
 
@@ -36,6 +40,7 @@ document.getElementById('isteps').innerText = isteps || '?';
 document.getElementById('tsteps').innerText = tsteps || '?';
 document.getElementById('cdude').innerText = cdude || '?';
 document.getElementById('maxd').innerText = maxd || '?';
+document.getElementById('cswap').innerText = cswap || '?';
 
 //get cheevos
 const cheevos = await secrets.get_flags('cheevos');
@@ -51,6 +56,10 @@ const cheevo_data = [
 	{ key: 'tstepsB', name: 'Silver Total', desc: 'Beat the game with at most 1900 "Total Steps"' },
 	{ key: 'tstepsC', name: 'Gold Total', desc: 'Beat the game with at most 1450 "Total Steps"' },
 	{ key: 'tstepsD', name: 'Platinum Total', desc: 'Beat the game with at most 1200 "Total Steps"' },
+	{ key: 'cswapA', name: 'Bronze Swaps', desc: 'Beat the game with at most 60 "Control Swaps"' },
+	{ key: 'cswapB', name: 'Silver Swaps', desc: 'Beat the game with at most 45 "Control Swaps"' },
+	{ key: 'cswapC', name: 'Gold Swaps', desc: 'Beat the game with at most 35 "Control Swaps"' },
+	{ key: 'cswapD', name: 'Platinum Swaps', desc: 'Beat the game with at most 30 "Control Swaps"' },
 	{ key: 'cdudeA', name: 'HexaDude', desc: 'Beat the game creating at most 6 Dudes' },
 	{ key: 'cdudeB', name: 'PentaDude', desc: 'Beat the game creating only 5 Dudes' },
 	{ key: 'maxdA', name: 'Medium Max', desc: 'Beat the game with at most 4 Dudes at a time' },

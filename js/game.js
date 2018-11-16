@@ -26,6 +26,7 @@ game.visual_layer = document.createElement("canvas");
 //sets the tileset params pointer to the loaded tileset parameters resource
 game.set_tileset_params = function(tileset_params) {
 	game.tileset_params = tileset_params;
+	display.set_background_color( gc('background') );
 };
 //sets the game params pointer to the loaded game parameters resource
 game.set_game_params = function(game_params) {
@@ -116,6 +117,20 @@ game.set_win_cheevos = async function() {
 	}
 	if(tsteps <= 1200) {
 		await secrets.save_flag(game.myid, 'cheevos', 'tstepsD');
+	}
+
+	const cswap = parseInt(await secrets.get_value('gs', 'cswap'));
+	if(cswap <= 60) {
+		await secrets.save_flag(game.myid, 'cheevos', 'cswapA');
+	}
+	if(cswap <= 45) {
+		await secrets.save_flag(game.myid, 'cheevos', 'cswapB');
+	}
+	if(cswap <= 35) {
+		await secrets.save_flag(game.myid, 'cheevos', 'cswapC');
+	}
+	if(cswap <= 30) {
+		await secrets.save_flag(game.myid, 'cheevos', 'cswapD');
 	}
 
 	const cdude = parseInt(await secrets.get_value('gs', 'cdude'));
@@ -216,8 +231,9 @@ game.render = function() {
 			game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color, true);
 		}
 
-		const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width;
-		const color = id === String(game.myid) ? gc('red') : gc('gray');
+		const isMe = id === String(game.myid);
+		const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width + (isMe ? 0 : 1);
+		const color = isMe ? gc('red') : gc('gray');
 		game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
 	}
 	display_stats();
@@ -230,23 +246,42 @@ game.update_stats = async function(communication) {
 	const critical = async function() {
 		const num_connections = communication.get_connections().length;
 
-		let isteps = parseInt(await secrets.get_value('ls', 'isteps'));
-		if(!isteps && isteps !== 0) {
-			isteps = -1;
+		let isteps = await secrets.get_value('ls', 'isteps');
+		if(isteps === null) {
+			isteps = 1000000;
+		}
+		else {
+			isteps = parseInt(isteps);
 		}
 		await secrets.save_value('ls', 'isteps', String(isteps + 1) );
 
-		let tsteps = parseInt(await secrets.get_value('ls', 'tsteps'));
-		if(!tsteps && tsteps !== 0) {
-			tsteps = -1;
+		let tsteps = await secrets.get_value('ls', 'tsteps');
+		if(tsteps === null) {
+			tsteps = 1000000;
+		}
+		else {
+			tsteps = parseInt(tsteps);
 		}
 		await secrets.save_value('ls', 'tsteps', String(tsteps + num_connections) );
 
-		let maxd = parseInt(await secrets.get_value('ls', 'maxd'));
-		if(!maxd && maxd !== 0) {
-			maxd = 0;
+		let cswap = await secrets.get_value('ls', 'cswap');
+		let lastc = await secrets.get_value('ls', 'lastc');
+		if(cswap === null) {
+			cswap = 1000000;
 		}
-		await secrets.save_value('ls', 'maxd', String( Math.max(maxd, num_connections) ) );
+		else {
+			cswap = parseInt(cswap);
+		}
+		if(lastc === null) {
+			lastc = -1;
+		}
+		else {
+			lastc = parseInt(lastc);
+		}
+		if(lastc !== game.myid) {
+			await secrets.save_value('ls', 'cswap', String(cswap + 1) );
+			await secrets.save_value('ls', 'lastc', String(game.myid) );
+		}
 
 	};
 	await locking.run_critical(game.myid, 'ls', critical, LOCK_TIMEOUT);
@@ -256,10 +291,23 @@ game.update_stats = async function(communication) {
 game.update_created_dudes = async function(communication) {
 
 	const critical = async function() {
+		const num_connections = communication.get_connections().length;
+
+		let maxd = await secrets.get_value('ls', 'maxd');
+		if(maxd === null) {
+			maxd = 10000;
+		}
+		else {
+			maxd = parseInt(maxd);
+		}
+		await secrets.save_value('ls', 'maxd', String( Math.max(maxd, num_connections + 1) ) );
 
 		let cdude = parseInt(await secrets.get_value('ls', 'cdude'));
-		if(!cdude && cdude !== 0) {
-			cdude = 0;
+		if(cdude === null) {
+			cdude = 10000;
+		}
+		else {
+			cdude = parseInt(cdude);
 		}
 		await secrets.save_value('ls', 'cdude', String( cdude + 1 ) );
 
@@ -287,6 +335,7 @@ game.update_bests = async function(communication) {
 	await locking.run_critical(game.myid, 'gs', critical_min('tsteps'), LOCK_TIMEOUT);
 	await locking.run_critical(game.myid, 'gs', critical_min('maxd'), LOCK_TIMEOUT);
 	await locking.run_critical(game.myid, 'gs', critical_min('cdude'), LOCK_TIMEOUT);
+	await locking.run_critical(game.myid, 'gs', critical_min('cswap'), LOCK_TIMEOUT);
 };
 
 const display_stats = async function() {
@@ -294,8 +343,9 @@ const display_stats = async function() {
 	const tsteps = parseInt(await secrets.get_value('ls', 'tsteps'));
 	const cdude = parseInt(await secrets.get_value('ls', 'cdude'));
 	const maxd = parseInt(await secrets.get_value('ls', 'maxd'));
+	const cswap = parseInt(await secrets.get_value('ls', 'cswap'));
 
-	display.set_stats(isteps, tsteps, cdude, maxd);
+	display.set_stats(isteps, tsteps, cdude, maxd, cswap);
 };
 
 
@@ -518,13 +568,13 @@ game.recieive_move = function(id, move_data) {
 	}
 };
 
-game.start_dude = async function(id) {
+game.start_dude = async function(communication) {
 	for(let y = world.start.y + world.start.h - 1; y >= world.start.y; y--) {		
 		for(let x = world.start.x; x < world.start.x + world.start.w; x++) {
 			if(!is_solid(x, y) ) {
 				const dude = { x: x, y: y };
 				game.dudes[game.myid] = dude;
-				await game.update_created_dudes();
+				await game.update_created_dudes(communication);
 				return dude;
 			}
 		}
