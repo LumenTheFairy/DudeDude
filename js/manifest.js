@@ -49,7 +49,7 @@ dd.manifest = [
 	 process: function(game_params, game) { game.set_game_params(game_params); }
 	},
 	{name: 'set_tileset_params',
-	 dependencies: ['tileset_params', 'game'],
+	 dependencies: ['tileset_params', 'game', 'set_tileset_params'],
 	 type: 'process',
 	 process: function(tileset_params, game) { game.set_tileset_params(tileset_params); }
 	},
@@ -64,7 +64,7 @@ dd.manifest = [
 	 process: function(communication, game) { game.hook_communication(communication); }
 	},
 	{name: 'remember_flags',
-	 dependencies: ['game', 'initialize_tileset'],
+	 dependencies: ['game', 'initialize_tileset', 'communication'],
 	 type: 'process',
 	 process: async function(game) { await game.remember_flags(); }
 	},

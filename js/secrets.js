@@ -103,8 +103,8 @@ secrets.get_value = async function(key, name) {
 };
 
 secrets.reset_ls = async function() {
-	await secrets.save_value('ls', 'isteps', 0 );
-	await secrets.save_value('ls', 'tsteps', 0 );
+	await secrets.save_value('ls', 'isteps', -1 );
+	await secrets.save_value('ls', 'tsteps', -1 );
 	await secrets.save_value('ls', 'maxd', 0 );
 	await secrets.save_value('ls', 'cdude', 0 );
 	await secrets.save_value('ls', 'cswap', 0 );

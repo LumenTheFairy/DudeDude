@@ -51,6 +51,7 @@ game.remember_flags = async function () {
 	const cheevos = await secrets.get_flags('cheevos');
 	if(cheevos.includes('You Won')) {
 		display.show_stats();
+		document.title = '[' + game.myid + '] ' + document.title;
 	}
 };
 
@@ -310,6 +311,24 @@ game.update_created_dudes = async function(communication) {
 			cdude = parseInt(cdude);
 		}
 		await secrets.save_value('ls', 'cdude', String( cdude + 1 ) );
+
+		let isteps = await secrets.get_value('ls', 'isteps');
+		if(isteps === null) {
+			isteps = 1000000;
+		}
+		else {
+			isteps = parseInt(isteps);
+		}
+		await secrets.save_value('ls', 'isteps', String(isteps + 1) );
+
+		let tsteps = await secrets.get_value('ls', 'tsteps');
+		if(tsteps === null) {
+			tsteps = 1000000;
+		}
+		else {
+			tsteps = parseInt(tsteps);
+		}
+		await secrets.save_value('ls', 'tsteps', String(tsteps + num_connections + 1) );
 
 	};
 	await locking.run_critical(game.myid, 'ls', critical, LOCK_TIMEOUT);
