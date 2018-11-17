@@ -49,7 +49,7 @@ dd.manifest = [
 	 process: function(game_params, game) { game.set_game_params(game_params); }
 	},
 	{name: 'set_tileset_params',
-	 dependencies: ['tileset_params', 'game', 'set_tileset_params'],
+	 dependencies: ['tileset_params', 'game', 'communication'],
 	 type: 'process',
 	 process: function(tileset_params, game) { game.set_tileset_params(tileset_params); }
 	},
