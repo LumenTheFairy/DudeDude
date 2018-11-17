@@ -10,6 +10,56 @@
 	"brown": "#805038"
 },
 
+"light" : {
+	"background": "#9090FF",
+	"gray": "#505060",
+	"white": "#D0D0E0",
+	"green": "#004010",
+	"red": "#900000",
+	"tan": "#CCA080",
+	"brown": "#604030"
+},
+
+"dark" : {
+	"background": "#080020",
+	"gray": "#505060",
+	"white": "#606090",
+	"green": "#003020",
+	"red": "#900020",
+	"tan": "#A080B8",
+	"brown": "#704058"
+},
+
+"sunset" : {
+	"background": "#A86030",
+	"gray": "#304040",
+	"white": "#F3A9F1",
+	"green": "#404000",
+	"red": "#501000",
+	"tan": "#ECB070",
+	"brown": "#604008"
+},
+
+"rainbow" : {
+	"background": "#000000",
+	"gray": "#0000FF",
+	"white": "#FFFF00",
+	"green": "#00FF00",
+	"red": "#FF0000",
+	"tan": "#8000FF",
+	"brown": "#FF4000"
+},
+
+"inverted" : {
+	"background": "#FFFFFF",
+	"gray": "#808070",
+	"white": "#000000",
+	"green": "#FF80D0",
+	"red": "#50FFFF",
+	"tan": "#003078",
+	"brown": "#80A0C8"
+},
+
 "TI" : {
 	"background": "#5B6753",
 	"gray": "#000000",
@@ -18,6 +68,26 @@
 	"red": "#000000",
 	"tan": "#000000",
 	"brown": "#000000"
+},
+
+"black" : {
+	"background": "#000000",
+	"gray": "#000000",
+	"white": "#000000",
+	"green": "#000000",
+	"red": "#000000",
+	"tan": "#000000",
+	"brown": "#000000"
+},
+
+"white" : {
+	"background": "#FFFFFF",
+	"gray": "#FFFFFF",
+	"white": "#FFFFFF",
+	"green": "#FFFFFF",
+	"red": "#FFFFFF",
+	"tan": "#FFFFFF",
+	"brown": "#FFFFFF"
 }
 
 }

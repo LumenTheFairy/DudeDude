@@ -26,7 +26,6 @@ game.visual_layer = document.createElement("canvas");
 //sets the tileset params pointer to the loaded tileset parameters resource
 game.set_tileset_params = function(tileset_params) {
 	game.tileset_params = tileset_params;
-	display.set_background_color( gc('background') );
 };
 //sets the game params pointer to the loaded game parameters resource
 game.set_game_params = function(game_params) {
@@ -56,10 +55,18 @@ game.remember_flags = async function () {
 };
 
 //set up the tileset
-game.initialize_tileset = function(image_data) {
+game.initialize_tileset = async function(image_data) {
 	//process the tile sheet image data
 	game.tiles = new TileSheet(image_data, game.tileset_params.transparent_colors, game.tileset_params.tile_width, game.tileset_params.tile_height);
 
+	//recall the saved pallet
+	let pallet_name = await secrets.get_value('opt', 'pallet');
+	if(pallet_name === null) {
+		pallet_name = 'default'
+	}
+	//set the pallet
+	get_color.set_option(pallet_name);
+	display.set_background_color( gc('background') );
 	//draw background layer
 	game.visual_layer.width = world.width * game.tiles.tile_width;
 	game.visual_layer.height = world.height * game.tiles.tile_height;

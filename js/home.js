@@ -79,6 +79,53 @@ const cheevo_list = cheevo_data.map( (data) =>
 `).join('');
 document.getElementById('cheevo-list').innerHTML = cheevo_list;
 
+
+//build the pallet selections
+const pallet_data = [
+	{ name: 'Default', value: 'default', locked: false, cheevo: ''},
+	{ name: 'Light', value: 'light', locked: true, cheevo: 'maxdA'},
+	{ name: 'Dark', value: 'dark', locked: true, cheevo: 'maxdA'},
+	{ name: 'Sunset', value: 'sunset', locked: true, cheevo: 'maxdA'},
+	{ name: 'Rainbow', value: 'rainbow', locked: true, cheevo: 'maxdA'},
+	{ name: 'Inverted', value: 'inverted', locked: true, cheevo: 'maxdA'},
+	{ name: 'TI Calculator', value: 'TI', locked: true, cheevo: 'maxdA'},
+	{ name: 'Black on black', value: 'black', locked: true, cheevo: 'maxdA'},
+	{ name: 'White on white', value: 'white', locked: true, cheevo: 'maxdA'},
+];
+const pallet_map = {};
+pallet_data.forEach( (data, index) => (pallet_map[data.value] = index) );
+
+const pallet_list = pallet_data.map( (data) => 
+`									<option value=${data.value}${(data.locked && !cheevos.includes(data.cheevo)) ? ' disabled' : ''}>${data.name}</option>
+`).join('');
+const pallet_select = document.getElementById('pallet-select');
+pallet_select.innerHTML = pallet_list;
+//recall the saved pallet
+const saved_pallet = await secrets.get_value('opt', 'pallet');
+if(saved_pallet !== null) {
+	pallet_select.value = saved_pallet;
+	document.getElementById('pallet-preview').src = 'image/pallets/' + saved_pallet + '.png';
+}
+else {
+	pallet_select.value = 'default';
+}
+//make pallet selection save the chosen pallet 
+pallet_select.onchange = function() {
+	const color = this.value;
+	//make sure it's a valid color
+	if( pallet_map[color] === undefined ) {
+		return;
+	}
+	const color_data = pallet_data[ pallet_map[color] ];
+	//make sure it's allowed
+	if( color_data.locked && !cheevos.includes(color_data.cheevo) ) {
+		return;
+	}
+	//save the value
+	secrets.save_value('opt', 'pallet', color_data.value);
+	document.getElementById('pallet-preview').src = 'image/pallets/' + color_data.value + '.png';
+};
+
 //show hidden stuff if the game has been beaten
 if(cheevos.includes('You Won')) {
 	document.body.className = 'show-hidden';

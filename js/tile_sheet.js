@@ -113,6 +113,11 @@ tile_sheet.TileSheet.prototype.add_color = function(context, color) {
 	this.color_cache.set(color, new_color);
 };
 
+//clears the cache to free up space from colors that will not be used again soon
+tile_sheet.TileSheet.prototype.clear_cache = function() {
+	this.color_cache.clear();
+};
+
 //draws a single tile from the tilesheet
 //  context: a RenderingContext that can draw image data
 //  color: a color string indicating which color to use to draw the tile

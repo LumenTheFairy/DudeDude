@@ -54,9 +54,9 @@ dd.manifest = [
 	 process: function(tileset_params, game) { game.set_tileset_params(tileset_params); }
 	},
 	{name: 'initialize_tileset',
-	 dependencies: ['tileset', 'game', 'set_tileset_params'],
+	 dependencies: ['tileset', 'game', 'set_tileset_params', 'init_display'],
 	 type: 'process',
-	 process: function(tileset_image, game) { game.initialize_tileset(tileset_image); }
+	 process: async function(tileset_image, game) { await game.initialize_tileset(tileset_image); }
 	},
 	{name: 'hook_communication',
 	 dependencies: ['communication', 'game'],

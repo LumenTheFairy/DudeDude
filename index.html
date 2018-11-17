@@ -38,20 +38,18 @@
 				<p> Only Chrome, Firefox, and Safari are currently supported. Javascript must be enabled. </p>
 
 				<div class='hidden'>
-				<hr>
-					<div id='records'>
-						<span id='record-heading'>Records:</span>
-						<span><span class='stat-name'>Individual Steps:</span><span id='isteps'></span></span>
-						<span><span class='stat-name'>Total Steps:</span><span id='tsteps'></span></span>
-						<span><span class='stat-name'>Created Dudes:</span><span id='cdude'></span></span>
-						<span><span class='stat-name'>Max Dudes:</span><span id='maxd'></span></span>
-						<span><span class='stat-name'>Control Swaps:</span><span id='cswap'></span></span>
-					</div>
-					<div id='cheevos'>
-						<span id='cheevo-heading'>Achievements:</span>
-						<div id='cheevo-list'>
-							
+					<hr>
+					<div id='options'>
+						<span class='heading'>Options:</span>
+						<div id='options-line1'>
+							<div id="pallet-container">
+								<span>Pallet:</span>
+								<select id="pallet-select" autocomplete="off">
+								</select>
+								<img id='pallet-preview' src='image/pallets/default.png' alt="" height='23' width='144'></img>
+							</div>
 						</div>
+						<div id='option-disclaimer'>(Options will apply to new tabs.)</div>
 					</div>
 				</div>
 				<hr>
@@ -60,6 +58,24 @@
 					<span> Want to reset your progress? <a id='reset-progress' href=''>Reset Progress</a> </span>
 					<span id='reset-note' class='hidden'>(This will not clear Records or Achievements.)</span>
 				</span>
+
+				<div class='hidden'>
+					<hr>
+					<div id='records'>
+						<span class='heading'>Records:</span>
+						<span><span class='stat-name'>Individual Steps:</span><span id='isteps'></span></span>
+						<span><span class='stat-name'>Total Steps:</span><span id='tsteps'></span></span>
+						<span><span class='stat-name'>Created Dudes:</span><span id='cdude'></span></span>
+						<span><span class='stat-name'>Max Dudes:</span><span id='maxd'></span></span>
+						<span><span class='stat-name'>Control Swaps:</span><span id='cswap'></span></span>
+					</div>
+					<div id='cheevos'>
+						<span class='heading'>Achievements:</span>
+						<div id='cheevo-list'>
+							
+						</div>
+					</div>
+				</div>
 
 
 			</div>
