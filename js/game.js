@@ -121,6 +121,9 @@ game.set_win_cheevos = async function() {
 	if(isteps <= 450) {
 		await secrets.save_flag(game.myid, 'cheevos', 'istepsD');
 	}
+	if(isteps <= 400) {
+		await secrets.save_flag(game.myid, 'cheevos', 'istepsE');
+	}
 
 	const tsteps = parseInt(await secrets.get_value('gs', 'tsteps'));
 	if(tsteps <= 2500) {
@@ -132,8 +135,11 @@ game.set_win_cheevos = async function() {
 	if(tsteps <= 1450) {
 		await secrets.save_flag(game.myid, 'cheevos', 'tstepsC');
 	}
-	if(tsteps <= 1200) {
+	if(tsteps <= 1250) {
 		await secrets.save_flag(game.myid, 'cheevos', 'tstepsD');
+	}
+	if(tsteps <= 1150) {
+		await secrets.save_flag(game.myid, 'cheevos', 'tstepsE');
 	}
 
 	const cswap = parseInt(await secrets.get_value('gs', 'cswap'));
@@ -148,6 +154,9 @@ game.set_win_cheevos = async function() {
 	}
 	if(cswap <= 30) {
 		await secrets.save_flag(game.myid, 'cheevos', 'cswapD');
+	}
+	if(cswap <= 27) {
+		await secrets.save_flag(game.myid, 'cheevos', 'cswapE');
 	}
 
 	const cdude = parseInt(await secrets.get_value('gs', 'cdude'));

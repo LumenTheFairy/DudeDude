@@ -118,6 +118,9 @@ a {
 	display: flex;
 	margin-bottom: 4px;
 }
+.cheevo-item-gap {
+	margin-bottom: 32px;
+}
 .cheevo-text {
 	display: flex;
 	flex-direction: column;
