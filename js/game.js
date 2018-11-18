@@ -13,9 +13,11 @@ const cn = control.control_names;
 const LOCK_TIMEOUT = 50;
 
 //game data
-game.tileset_params = null
-game.game_params = null
-game.tiles = null
+game.tileset_params = null;
+game.dude_tile_x = 2;
+game.dude_tile_y = 0;
+game.game_params = null;
+game.tiles = null;
 
 //game state
 game.dudes = {};
@@ -24,8 +26,15 @@ game.flags = new Set();
 game.visual_layer = document.createElement("canvas");
 
 //sets the tileset params pointer to the loaded tileset parameters resource
-game.set_tileset_params = function(tileset_params) {
+game.set_tileset_params = async function(tileset_params) {
 	game.tileset_params = tileset_params;
+	//recall the saved character
+	let dude_tiles = await secrets.get_value('opt', 'character');
+	if(dude_tiles === null) {
+		dude_tiles = 'default';
+	}
+	game.dude_tile_x = game.tileset_params.dude_tiles[dude_tiles].x;
+	game.dude_tile_y = game.tileset_params.dude_tiles[dude_tiles].y;
 };
 //sets the game params pointer to the loaded game parameters resource
 game.set_game_params = function(game_params) {
@@ -62,7 +71,7 @@ game.initialize_tileset = async function(image_data) {
 	//recall the saved pallet
 	let pallet_name = await secrets.get_value('opt', 'pallet');
 	if(pallet_name === null) {
-		pallet_name = 'default'
+		pallet_name = 'default';
 	}
 	//set the pallet
 	get_color.set_option(pallet_name);
@@ -240,7 +249,7 @@ game.render = function() {
 		}
 
 		const isMe = id === String(game.myid);
-		const tile = game.tileset_params.dude_tile_x + game.tileset_params.dude_tile_y * game.tiles.tile_width + (isMe ? 0 : 1);
+		const tile = game.dude_tile_x + game.dude_tile_y * game.tiles.tile_width + (isMe ? 0 : 1);
 		const color = isMe ? gc('red') : gc('gray');
 		game.tiles.draw_tile(display.context, tile, dest_x, dest_y, color);
 	}

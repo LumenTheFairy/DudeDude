@@ -144,7 +144,7 @@ a {
 	justify-content: space-evenly;
 	flex-wrap: wrap;
 }
-#pallet-preview {
+.opt-preview {
 	vertical-align: middle;
 }
 

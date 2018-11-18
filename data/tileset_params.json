@@ -4,6 +4,42 @@
 
 	"transparent_colors": ["#000040", "#000000"],
 
-	"dude_tile_x": 2,
-	"dude_tile_y": 0
+	"dude_tiles": {
+		"default": {
+			"x": 2,
+			"y": 0
+		},
+		"block": {
+			"x": 0,
+			"y": 7
+		},
+		"wide": {
+			"x": 2,
+			"y": 7
+		},
+		"star": {
+			"x": 4,
+			"y": 7
+		},
+		"upside": {
+			"x": 6,
+			"y": 7
+		},
+		"bunny": {
+			"x": 0,
+			"y": 8
+		},
+		"lift": {
+			"x": 2,
+			"y": 8
+		},
+		"snail": {
+			"x": 4,
+			"y": 8
+		},
+		"jelly": {
+			"x": 6,
+			"y": 8
+		}
+	}
 }
