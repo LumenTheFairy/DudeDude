@@ -31,13 +31,13 @@
 },
 
 "sunset" : {
-	"background": "#A86030",
-	"gray": "#304040",
-	"white": "#F3A9F1",
-	"green": "#404000",
-	"red": "#501000",
-	"tan": "#ECB070",
-	"brown": "#604008"
+	"background": "#DE95D1",
+	"gray": "#D0D0FF",
+	"white": "#DC30C9",
+	"green": "#9FFA45",
+	"red": "#493A92",
+	"tan": "#F94444",
+	"brown": "#FE8043"
 },
 
 "rainbow" : {

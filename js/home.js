@@ -157,7 +157,7 @@ const pallet_data = [
 	{ name: 'Default', value: 'default', locked: false, cheevo: ''},
 	{ name: 'Day', value: 'light', locked: true, cheevo: 'You Won'},
 	{ name: 'Night', value: 'dark', locked: true, cheevo: 'gateA'},
-	{ name: 'Sunset', value: 'sunset', locked: true, cheevo: 'istepsA'},
+	{ name: 'Candy', value: 'sunset', locked: true, cheevo: 'istepsA'},
 	{ name: 'Rainbow', value: 'rainbow', locked: true, cheevo: 'tstepsC'},
 	{ name: 'Inverted', value: 'inverted', locked: true, cheevo: 'cswapB'},
 	{ name: 'TI Calculator', value: 'TI', locked: true, cheevo: 'cdudeB'},
