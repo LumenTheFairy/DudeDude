@@ -59,7 +59,12 @@ game.remember_flags = async function () {
 	const cheevos = await secrets.get_flags('cheevos');
 	if(cheevos.includes('You Won')) {
 		display.show_stats();
-		document.title = '[' + game.myid + '] ' + document.title;
+		if(game.myid) {
+			document.title = '[' + game.myid + '] ' + document.title;
+		}
+		else {
+			document.title = '[x] ' + document.title;
+		}
 	}
 };
 

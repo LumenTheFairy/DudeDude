@@ -7,7 +7,15 @@ const communication = {};
 const now = ( () => (new Date()).getTime() );
 const JOIN_TIMEOUT = 1200;
 const LOCK_TIMEOUT = 50;
+const NEW_TAB_TIMEOUT = 5000;
 
+if( localStorage.getItem('__j')  ) {
+	if( now() - parseInt(localStorage.getItem('__j')) < NEW_TAB_TIMEOUT ) {
+		game.end('Successive tabs opened too quickly.');
+		return null;
+	}
+}
+localStorage.setItem('__j', String(now()) );
 
 // COMMUNICATION
 const bc = new BroadcastChannel(secrets.channel_name);
@@ -70,6 +78,7 @@ bc.onmessage = function (ev) {
 	}
 };
 window.onbeforeunload = function(e) {
+	localStorage.removeItem('__j');
 	//small hack to clean up the connections when the last connection is closed
 	//it isn't locked because nothing async can reliably finish in the unload callback
 	if(communication.get_connections().length === 1) {
@@ -213,9 +222,11 @@ if(dude) {
 	await join_connection(dude);
 }
 else {
-	game.end('No space! (Try moving dudes away from the start.)')
+	game.end('No space! (Try moving dudes away from the start.)');
+	localStorage.removeItem('__j');
 	return null;
 }
 
+localStorage.removeItem('__j');
 return communication;
 };

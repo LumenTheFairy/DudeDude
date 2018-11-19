@@ -40,7 +40,7 @@ dd.manifest = [
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
 	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets', 'locking'], type: 'script', url: 'js/game.js' },
 
-	{name: 'communication', dependencies: ['game', 'secrets', 'locking', 'broadcast'],  type: 'script', url: 'js/communication.js' },
+	{name: 'communication', dependencies: ['game', 'secrets', 'locking', 'broadcast', 'init_display'],  type: 'script', url: 'js/communication.js' },
 
 
 	{name: 'set_game_params',

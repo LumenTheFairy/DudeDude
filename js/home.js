@@ -3,6 +3,7 @@
 dd.scripts.home = async function(secrets) {
 
 const reset_progress = function(e) {
+	localStorage.removeItem('__j');
 	e.preventDefault();
 	//close all connections
 	const bc = new BroadcastChannel(secrets.channel_name);
