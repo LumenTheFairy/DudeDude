@@ -166,7 +166,7 @@ const pallet_data = [
 ];
 
 await build_selections(character_data, 'character-select', 'character-preview', 'dudes', 'Character','character');
-await build_selections(pallet_data, 'pallet-select', 'pallet-preview', 'pallets', 'Pallet', 'pallet');
+await build_selections(pallet_data, 'pallet-select', 'pallet-preview', 'pallets', 'Palette', 'pallet');
 
 //show hidden stuff if the game has been beaten
 if(cheevos.includes('You Won')) {
