@@ -3,11 +3,11 @@
 dd.scripts.home = async function(secrets) {
 
 const reset_progress = function(e) {
-	localStorage.removeItem('__j');
+	namedstore.removeItem('__j');
 	e.preventDefault();
 	//close all connections
 	const bc = new BroadcastChannel(secrets.channel_name);
-	let connections = localStorage.getItem('c');
+	let connections = namedstore.getItem('c');
 	if(connections) {
 		JSON.parse(connections).forEach( function(id) {
 			bc.postMessage( {
@@ -19,7 +19,7 @@ const reset_progress = function(e) {
 		});
 	}
 	//whipe stored links
-	localStorage.setItem('links', JSON.stringify({}));
+	namedstore.setItem('links', JSON.stringify({}));
 	//whipe stored stats
 	secrets.reset_ls().then( () => location.replace('') );
 
@@ -79,7 +79,7 @@ const cheevo_data = [
 	{ key: 'tstepsE', name: 'Rainbow Total', desc: 'Beat the game with at most 1150 "Total Steps"', gap: false},
 ];
 
-const cheevo_list = cheevo_data.map( (data) => 
+const cheevo_list = cheevo_data.map( (data) =>
 `<span class='cheevo-item${data.gap ? " cheevo-item-gap" : ""}'>
 	<span class='cheevo-check-box'>${cheevos.includes(data.key) ? '☑' : '☐'}</span>
 	<span class='cheevo-text' id='cheevo-${data.key}'>
@@ -97,7 +97,7 @@ const build_selections = async function(selection_data, select_id, preview_id, f
 	const selection_map = {};
 	selection_data.forEach( (data, index) => (selection_map[data.value] = index) );
 
-	const selection_html = selection_data.map( (data) => 
+	const selection_html = selection_data.map( (data) =>
 	`									<option value=${data.value}${(data.locked && !cheevos.includes(data.cheevo)) ? ' disabled' : ''}>${data.name}</option>
 	`).join('');
 	const selection_elem = document.getElementById(select_id);
@@ -114,7 +114,7 @@ const build_selections = async function(selection_data, select_id, preview_id, f
 	else {
 		selection_elem.value = 'default';
 	}
-	//make pallet selection save the chosen pallet 
+	//make pallet selection save the chosen pallet
 	selection_elem.onchange = function() {
 		const value = this.value;
 		//make sure it's a valid

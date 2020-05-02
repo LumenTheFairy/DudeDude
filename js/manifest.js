@@ -20,10 +20,16 @@ dd.manifest = [
 	{name: 'tileset',     type: 'image_data', url: 'image/tileset.png'},
 
 	{name: 'broadcast', type: 'external_script', url: 'js/broadcast.js' },
+	{name: 'namedstore', dependencies: [], type: 'script', url: 'js/namedstore.js' },
+	{name: 'start_store',
+	 dependencies: ['namedstore'],
+	 type: 'process',
+	 process: function() { namedstore.setName('dd'); }
+	},
 
 	{name: 'data_lookup', dependencies: [],   type: 'script', url: 'js/data_lookup.js' },
 
-	{name: 'get_color',    
+	{name: 'get_color',
 	 dependencies: ['colors', 'data_lookup'],
 	 type: 'process',
 	 process: function(colors, make_lookup) { return make_lookup(colors, dd.default_palette, dd.default_color); }
@@ -34,13 +40,13 @@ dd.manifest = [
 	{name: 'control',     dependencies: [],                     type: 'script', url: 'js/control.js' },
 	{name: 'tile_sheet',  dependencies: ['util'],               type: 'script', url: 'js/tile_sheet.js' },
 
-	{name: 'locking',     dependencies: [],                     type: 'script', url: 'js/locking.js' },
-	{name: 'secrets',     dependencies: ['locking'],            type: 'script', url: 'js/secrets.js' },
+	{name: 'locking',     dependencies: ['start_store'],                     type: 'script', url: 'js/locking.js' },
+	{name: 'secrets',     dependencies: ['locking', 'start_store'],          type: 'script', url: 'js/secrets.js' },
 
 	{name: 'world',       dependencies: ['world_data'],         type: 'script', url: 'js/world.js' },
 	{name: 'game',        dependencies: ['display', 'control', 'world', 'tile_sheet', 'get_color', 'secrets', 'locking'], type: 'script', url: 'js/game.js' },
 
-	{name: 'communication', dependencies: ['game', 'secrets', 'locking', 'broadcast', 'init_display'],  type: 'script', url: 'js/communication.js' },
+	{name: 'communication', dependencies: ['game', 'secrets', 'locking', 'broadcast', 'start_store', 'init_display'],  type: 'script', url: 'js/communication.js' },
 
 
 	{name: 'set_game_params',

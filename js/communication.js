@@ -9,13 +9,13 @@ const JOIN_TIMEOUT = 1200;
 const LOCK_TIMEOUT = 50;
 const NEW_TAB_TIMEOUT = 5000;
 
-if( localStorage.getItem('__j')  ) {
-	if( now() - parseInt(localStorage.getItem('__j')) < NEW_TAB_TIMEOUT ) {
+if( namedstore.getItem('__j')  ) {
+	if( now() - parseInt(namedstore.getItem('__j')) < NEW_TAB_TIMEOUT ) {
 		game.end('Successive tabs opened too quickly.');
 		return null;
 	}
 }
-localStorage.setItem('__j', String(now()) );
+namedstore.setItem('__j', String(now()) );
 
 // COMMUNICATION
 const bc = new BroadcastChannel(secrets.channel_name);
@@ -78,7 +78,7 @@ bc.onmessage = function (ev) {
 	}
 };
 window.onbeforeunload = function(e) {
-	localStorage.removeItem('__j');
+	namedstore.removeItem('__j');
 	//small hack to clean up the connections when the last connection is closed
 	//it isn't locked because nothing async can reliably finish in the unload callback
 	if(communication.get_connections().length === 1) {
@@ -88,14 +88,14 @@ window.onbeforeunload = function(e) {
 	//refreshing would not register as a control swap.
 	//so, in that case, change the previous mover to a non-existant connection
 	//we need to read these values directly because the normal functions won't be certain to finish
-	let ls = localStorage.getItem('ls');
+	let ls = namedstore.getItem('ls');
 	if(ls) {
 		ls = JSON.parse(ls);
 		let lastc = ls.lastc;
 		if(lastc) {
 			if(parseInt(lastc.v) === game.myid) {
 				ls.lastc = undefined;
-				localStorage.setItem('ls', JSON.stringify(ls));
+				namedstore.setItem('ls', JSON.stringify(ls));
 			}
 		}
 	}
@@ -117,7 +117,7 @@ communication.end = function() {
 // these two functions, if used in combination, should be wrapped in a locked critical call,
 // using 'c' as the key
 communication.get_connections = function() {
-	let connections = localStorage.getItem('c');
+	let connections = namedstore.getItem('c');
 	if(connections) {
 		return JSON.parse(connections);
 	}
@@ -126,7 +126,7 @@ communication.get_connections = function() {
 	}
 };
 const write_connections = function(connections) {
-	localStorage.setItem('c', JSON.stringify(connections) );
+	namedstore.setItem('c', JSON.stringify(connections) );
 };
 
 const join_connection = async function(dude) {
@@ -223,10 +223,10 @@ if(dude) {
 }
 else {
 	game.end('No space! (Try moving dudes away from the start.)');
-	localStorage.removeItem('__j');
+	namedstore.removeItem('__j');
 	return null;
 }
 
-localStorage.removeItem('__j');
+namedstore.removeItem('__j');
 return communication;
 };

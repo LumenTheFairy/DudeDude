@@ -20,7 +20,7 @@ const waitForKeyChange = function(keyname) {
 				resolver();
 			}
 		};
-		window.addEventListener('storage', test_event);      
+		window.addEventListener('storage', test_event);
 	});
 	return [promise, resolver];
 };
@@ -39,7 +39,7 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 	let cur_promise = null;
 	let cur_resolver = function() {};
 
-	//console.log(localStorage.getItem(ykey));
+	//console.log(namedstore.getItem(ykey));
 
 	let locked = true;
 	if( timeout > 0 ) {
@@ -48,7 +48,7 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 			if(locked) {
 				//console.log('__hijack__');
 				//hijack the lock
-				localStorage.setItem(ykey, my_id);
+				namedstore.setItem(ykey, my_id);
 				//free up any waits
 				cur_resolver();
 				//leave the lock loop
@@ -57,13 +57,13 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 		}, timeout);
 	}
 
-	//console.log(localStorage.getItem(ykey));
+	//console.log(namedstore.getItem(ykey));
 	while(locked) {
 		// try to get permission to set the lock
 		//console.log("__x__");
-		localStorage.setItem(xkey, my_id);
-		//console.log(localStorage.getItem(ykey));
-		if( localStorage.getItem(ykey) ){
+		namedstore.setItem(xkey, my_id);
+		//console.log(namedstore.getItem(ykey));
+		if( namedstore.getItem(ykey) ){
 			[cur_promise, cur_resolver] = waitForKeyChange(ykey);
 			//console.log("__x_lock__");
 			await cur_promise;
@@ -71,8 +71,8 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 		}
 		// try to set the lock
 		//console.log("__y__");
-		localStorage.setItem(ykey, my_id);
-		if( localStorage.getItem(xkey) !== my_id ) {
+		namedstore.setItem(ykey, my_id);
+		if( namedstore.getItem(xkey) !== my_id ) {
 			// wait till either key changes
 			let [xchange, cur_resolver] = waitForKeyChange(xkey);
 			let [ychange, _] = waitForKeyChange(ykey);
@@ -82,7 +82,7 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 		}
 		// see if we actually got the lock
 		//console.log("__z__");
-		if( localStorage.getItem(ykey) !== my_id ){
+		if( namedstore.getItem(ykey) !== my_id ){
 			[cur_promise, cur_resolver] = waitForKeyChange(ykey);
 			//console.log("__z_lock__");
 			await cur_promise;
@@ -96,7 +96,7 @@ locking.run_critical = async function(myid, keyname, critical, timeout) {
 	await critical();
 
 	// release lock
-	localStorage.setItem(ykey, "");
+	namedstore.setItem(ykey, "");
 	//console.log("__out__");
 };
 

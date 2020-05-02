@@ -11,15 +11,15 @@ if(!crypto.subtle) {
 const LOCK_TIMEOUT = 50;
 
 let firstRun = false;
-let mine = localStorage.getItem('mine');
+let mine = namedstore.getItem('mine');
 if(!mine) {
 	mine = String(Math.floor(Math.random() * 10000000000000000));
-	localStorage.setItem('mine', mine);
+	namedstore.setItem('mine', mine);
 	firstRun = true;
 }
-let hi = localStorage.getItem('___hi');
+let hi = namedstore.getItem('___hi');
 if(!hi) {
-	localStorage.setItem('___hi', "Hi! Welcome to the localStorage for Dude Dude -A Short Puzzle Adventure-! If you're here because you think it's part of the puzzle, you can rest assured that it is not, and you can go back to the game proper. If you're here to change your scores or something, I'm not going to try to stop you; however, the data is slightly obfuscated, so it won't be entirely simple (but honestly not that hard either). Do be aware that tampering with the data here very well may cause issues in the game, and we aren't going to pretend that that isn't your own problem. So good luck with that.");
+	namedstore.setItem('___hi', "Hi! Welcome to the localStorage for Dude Dude -A Short Puzzle Adventure-! If you're here because you think it's part of the puzzle, you can rest assured that it is not, and you can go back to the game proper. If you're here to change your scores or something, I'm not going to try to stop you; however, the data is slightly obfuscated, so it won't be entirely simple (but honestly not that hard either). Do be aware that tampering with the data here very well may cause issues in the game, and we aren't going to pretend that that isn't your own problem. So good luck with that.");
 }
 
 //https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
@@ -30,7 +30,7 @@ const sha256 = async function (message) {
 
     // hash the message
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    
+
     // convert ArrayBuffer to Array
     const hashArray = Array.from(new Uint8Array(hashBuffer));
 
@@ -44,7 +44,7 @@ const flag_secret = ( async (key, name) => await sha256("saltedtunaicecream::" +
 const value_check = ( async (key, name, value) => await sha256("saltedtunaicecream::" + key + "::" + name + "::" + value + "::" + mine) );
 
 const get_key_map = function(key) {
-	let key_map = localStorage.getItem(key);
+	let key_map = namedstore.getItem(key);
 	if(key_map) {
 		return JSON.parse(key_map);
 	}
@@ -53,7 +53,7 @@ const get_key_map = function(key) {
 	}
 };
 const write_key_map = function(key, data) {
-	localStorage.setItem(key, JSON.stringify(data) );
+	namedstore.setItem(key, JSON.stringify(data) );
 };
 
 secrets.save_flag = async function(id, key, name) {
